@@ -12,6 +12,7 @@
 		1B5D8728902895A0AC8B49A2 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F74745676D3203A9F0926A50 /* Nunito-Bold.ttf */; };
 		2444FB29D663CAFC9C396DC2 /* ActivityRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10E1F1912E09F7092C18711 /* ActivityRepositoryImpl.swift */; };
 		2962E4B9087ACA10E8658675 /* MoodRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C190D83D4926A610706E75B6 /* MoodRepositoryImpl.swift */; };
+		2E38C7D999BD91F2A68CA707 /* BadgeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681D8E6BE129B0BEE084864C /* BadgeItem.swift */; };
 		31EE76A8807F4DACD573266A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CB9F95D188EA8C4257E71 /* HomeView.swift */; };
 		480C7934ED811B201871BCA0 /* Streak.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3331C0CA891739678E4AEB6 /* Streak.swift */; };
 		528F7670055ED14503510684 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0D2192FD0EC71D4A00E2A4CE /* Nunito-SemiBold.ttf */; };
@@ -67,6 +68,7 @@
 		493CB5462DCC9F9ABBC9DCC8 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		541BEB226C245E58F06836C0 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		618D6278B5CEA2DA998B1638 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
+		681D8E6BE129B0BEE084864C /* BadgeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeItem.swift; sourceTree = "<group>"; };
 		6866E05F87E746CF5B6FB45A /* PrimaryCTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryCTA.swift; sourceTree = "<group>"; };
 		6C355C507CC89ADEDA6C964D /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
 		71BA03CE4B238F110B65DBA6 /* Nunito-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Black.ttf"; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				C3FA5EE8C52D6F623CE48829 /* ActivityCard.swift */,
+				681D8E6BE129B0BEE084864C /* BadgeItem.swift */,
 				D319BB12144BD99839269FE5 /* CloseButton.swift */,
 				CFF3D814DC772059425EB6C9 /* PillTag.swift */,
 				6866E05F87E746CF5B6FB45A /* PrimaryCTA.swift */,
@@ -398,6 +401,7 @@
 				5B50470C7F8BCDF39DF28F2E /* ActivityRepository.swift in Sources */,
 				2444FB29D663CAFC9C396DC2 /* ActivityRepositoryImpl.swift in Sources */,
 				B00506B1EE6A390677EC2971 /* Badge.swift in Sources */,
+				2E38C7D999BD91F2A68CA707 /* BadgeItem.swift in Sources */,
 				884331003F1BDBE0F8FE96C6 /* CloseButton.swift in Sources */,
 				96E1BABA53862B5DBFB3C8DF /* Color+stillpoint.swift in Sources */,
 				D08699B2326A8F864BE0CA7E /* ContentView.swift in Sources */,
