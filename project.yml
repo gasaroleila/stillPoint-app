@@ -1,0 +1,54 @@
+name: stillpoint
+options:
+  bundleIdPrefix: com.stillpoint
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "26.4"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.1"
+    SWIFT_STRICT_CONCURRENCY: complete
+
+targets:
+  stillpoint:
+    type: application
+    platform: iOS
+    sources:
+      - path: stillpoint
+        excludes:
+          - "Preview Content"
+    resources:
+      - path: stillpoint/Resources
+      - path: stillpoint/Preview Content
+    settings:
+      base:
+        INFOPLIST_FILE: stillpoint/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.stillpoint.app
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: stillpoint/Resources/Info.plist
+      properties:
+        UIAppFonts:
+          - Nunito-Regular.ttf
+          - Nunito-SemiBold.ttf
+          - Nunito-Bold.ttf
+          - Nunito-ExtraBold.ttf
+          - Nunito-Black.ttf
+        CFBundleName: stillpoint
+        CFBundleDisplayName: stillpoint
+        UILaunchScreen:
+          UIColorName: spPrimary
+
+  stillpointTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: stillpointTests
+    dependencies:
+      - target: stillpoint
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.stillpoint.app.tests
