@@ -278,3 +278,23 @@ All steps: modal, `spBackground`, CloseButton top-right
 12. Persist activity completion, mood entries, journal entries
 13. XP calculation and streak tracking
 14. Calendar integration (Schedule tab)
+
+#### Journey chart refactor (Phase 4 prerequisite)
+The Journey chart in `JourneyView.swift` currently uses hardcoded mock arrays where each bar carries its own pixel height and `Color` value. Before wiring backend data, refactor:
+
+1. **Add domain type** in `Domain/Entities/`:
+   ```swift
+   struct ChartPoint: Sendable { let label: String; let activityCount: Int }
+   struct JourneySnapshot: Sendable {
+       let chartPoints: [ChartPoint]
+       let avgPerDay: Double
+       let bestStreakDays: Int
+       let totalXP: Int
+       let breakdown: [ActivityType: Int]
+   }
+   ```
+2. **Extend `ActivityRepository`** with `func journeySnapshot(for period: JourneyPeriod) async -> JourneySnapshot`.
+3. **Derive bar color + height in the view** from `activityCount` using a single rule (e.g., 0 → `spChartEmpty`, 1–2 → `spChartLight`, 3–4 → `spChartMedium`, 5+ → `spPrimary`; height = `activityCount / maxCount * chartMaxHeight`).
+4. **Replace hardcoded `chartBars` / `currentStats` / `currentBreakdown`** with values derived from the fetched snapshot.
+
+This keeps the raw `activityCount` (backend truth) separate from presentation (color/height) so a new threshold rule or chart height can change without touching data.

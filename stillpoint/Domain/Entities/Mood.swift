@@ -1,11 +1,17 @@
 import Foundation
 
 enum MoodType: String, CaseIterable, Sendable {
-    case happy
-    case calm
-    case neutral
-    case sad
     case stressed
+    case sad
+    case neutral
+    case happy
+    case overwhelmed
+
+    var label: String {
+        rawValue.capitalized
+    }
+
+    var assetName: String { rawValue }
 }
 
 struct MoodEntry: Identifiable, Sendable {
