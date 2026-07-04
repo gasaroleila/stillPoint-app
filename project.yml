@@ -20,6 +20,8 @@ targets:
           - "Preview Content"
     resources:
       - path: stillpoint/Resources
+        excludes:
+          - "Info.plist"
       - path: stillpoint/Preview Content
     settings:
       base:
@@ -28,19 +30,6 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    info:
-      path: stillpoint/Resources/Info.plist
-      properties:
-        UIAppFonts:
-          - Nunito-Regular.ttf
-          - Nunito-SemiBold.ttf
-          - Nunito-Bold.ttf
-          - Nunito-ExtraBold.ttf
-          - Nunito-Black.ttf
-        CFBundleName: stillpoint
-        CFBundleDisplayName: stillpoint
-        UILaunchScreen:
-          UIColorName: spPrimary
 
   stillpointTests:
     type: bundle.unit-test
