@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedMood: MoodType? = nil
+    @State private var showBreathingExercise = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -13,6 +14,9 @@ struct HomeView: View {
         }
         .background(Color.spBackground)
         .ignoresSafeArea(edges: .top)
+        .fullScreenCover(isPresented: $showBreathingExercise) {
+            BreathingExerciseView(onDismiss: { showBreathingExercise = false })
+        }
     }
 
     // MARK: - Header
@@ -188,7 +192,7 @@ struct HomeView: View {
                     description: activity.description,
                     durationText: activity.durationText,
                     xpText: activity.xpText,
-                    action: {}
+                    action: { handleActivityTap(activity.type) }
                 )
             }
         }
@@ -197,6 +201,15 @@ struct HomeView: View {
         .padding(.bottom, 32)
         .frame(maxWidth: .infinity)
         .background(Color.spBackground)
+    }
+
+    private func handleActivityTap(_ type: ActivityType) {
+        switch type {
+        case .breathing:
+            showBreathingExercise = true
+        default:
+            break
+        }
     }
 
     private var homeActivities: [HomeActivity] {

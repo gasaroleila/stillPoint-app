@@ -1,12 +1,28 @@
 import Foundation
 
 struct ActivityRepositoryImpl: ActivityRepository {
-    func getActivities() async -> [Activity] {
+    func getActivities() async throws -> [Activity] {
         Activity.samples
     }
 
-    func getActivity(id: UUID) async -> Activity? {
+    func getActivity(id: UUID) async throws -> Activity? {
         Activity.samples.first { $0.id == id }
+    }
+
+    func logCompletion(activityType: ActivityType, duration: Int) async throws {
+        // Stub — will write to Firestore in Phase 3
+    }
+
+    func getCompletions(from: Date, to: Date) async throws -> [ActivityCompletion] {
+        []
+    }
+
+    func getTodaySuggestions() async throws -> [ActivitySuggestion] {
+        []
+    }
+
+    func respondToSuggestion(id: String, action: SuggestionAction) async throws {
+        // Stub — will write to Firestore in Phase 3
     }
 }
 
