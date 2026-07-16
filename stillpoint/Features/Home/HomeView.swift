@@ -2,6 +2,10 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var selectedMood: MoodType? = nil
+    @State private var showBreathingExercise = false
+    @State private var showDeepFocus = false
+    // Tracks XP earned from completed activities this session
+    @State private var earnedXP = 0
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -13,6 +17,18 @@ struct HomeView: View {
         }
         .background(Color.spBackground)
         .ignoresSafeArea(edges: .top)
+        .fullScreenCover(isPresented: $showBreathingExercise) {
+            BreathingExerciseView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showBreathingExercise = false }
+            )
+        }
+        .fullScreenCover(isPresented: $showDeepFocus) {
+            DeepFocusView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showDeepFocus = false }
+            )
+        }
     }
 
     // MARK: - Header
@@ -177,7 +193,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.spTextSecondary)
                 }
                 Spacer()
-                XPBadge(earned: 0, total: 195)
+                XPBadge(earned: earnedXP, total: 195)
             }
             .padding(.bottom, 4)
 
@@ -188,7 +204,7 @@ struct HomeView: View {
                     description: activity.description,
                     durationText: activity.durationText,
                     xpText: activity.xpText,
-                    action: {}
+                    action: { handleActivityTap(activity.type) }
                 )
             }
         }
@@ -197,6 +213,17 @@ struct HomeView: View {
         .padding(.bottom, 32)
         .frame(maxWidth: .infinity)
         .background(Color.spBackground)
+    }
+
+    private func handleActivityTap(_ type: ActivityType) {
+        switch type {
+        case .breathing:
+            showBreathingExercise = true
+        case .focus:
+            showDeepFocus = true
+        default:
+            break
+        }
     }
 
     private var homeActivities: [HomeActivity] {

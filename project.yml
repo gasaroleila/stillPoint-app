@@ -5,6 +5,11 @@ options:
     iOS: "17.0"
   xcodeVersion: "26.4"
 
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: "12.16.0"
+
 settings:
   base:
     SWIFT_VERSION: "6.1"
@@ -30,6 +35,13 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: 1
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFirestore
+      - package: Firebase
+        product: FirebaseFunctions
 
   stillpointTests:
     type: bundle.unit-test

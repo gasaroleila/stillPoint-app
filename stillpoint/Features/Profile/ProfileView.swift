@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject private var dependencies: Dependencies
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 16) {
@@ -9,11 +11,37 @@ struct ProfileView: View {
                 overviewCard
                 badgesCard(title: "Monthly Badges", items: monthlyBadges)
                 badgesCard(title: "Activity Awards", items: activityAwards)
+                logoutButton
+                    .padding(.horizontal, SP.Padding.screenHorizontal)
                     .padding(.bottom, 32)
             }
             .padding(.top, 48)
         }
         .background(Color.spBackground)
+    }
+
+    private var logoutButton: some View {
+        Button {
+            Task {
+                try? await dependencies.auth.logout()
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.portrait.and.arrow.right")
+                    .font(.system(size: 14, weight: .bold))
+                Text("Sign Out")
+                    .font(.custom("Nunito-ExtraBold", size: 14.4))
+            }
+            .foregroundStyle(.red)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(Color.white)
+            .cornerRadius(SP.Radius.card)
+            .overlay(
+                RoundedRectangle(cornerRadius: SP.Radius.card)
+                    .stroke(Color.red.opacity(0.2), lineWidth: 1)
+            )
+        }
     }
 
     // MARK: - Header

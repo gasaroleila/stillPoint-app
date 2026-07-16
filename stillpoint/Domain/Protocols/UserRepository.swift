@@ -1,7 +1,10 @@
 import Foundation
 
 protocol UserRepository: Sendable {
-    func getProfile() async -> UserProfile
-    func getStreak() async -> Streak
-    func getBadges() async -> [Badge]
+    func getProfile() async throws -> UserProfile
+    func updateProfile(name: String) async throws
+    func getStreak() async throws -> Streak
+    func getBadges() async throws -> [Badge]
+    func getGamificationStatus() async throws -> GamificationStatus
+    func getReport(period: ReportPeriod) async throws -> Report
 }

@@ -4,7 +4,7 @@ extension Color {
     static let spPrimary = Color(hex: 0xFFD60A)
     static let spPrimaryLight = Color(hex: 0xFFF8D6)
     static let spBackground = Color(hex: 0xFAFAF8)
-    static let spBackgroundAlt = Color(hex: 0xF5F3EE)
+    static let spBackgroundAlt = Color(hex: 0xFFFDF0)
     static let spTextPrimary = Color(hex: 0x0D0D0D)
     static let spTextSecondary = Color(hex: 0x7A7870)
     static let spBorder = Color(hex: 0xE8E6E0)
