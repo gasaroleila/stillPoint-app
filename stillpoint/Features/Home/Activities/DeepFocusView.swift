@@ -2,6 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct DeepFocusView: View {
+    let onComplete: (Int) -> Void
     let onDismiss: () -> Void
 
     @State private var step: Step = .taskInput
@@ -39,7 +40,10 @@ struct DeepFocusView: View {
             ActivityCompleteView(
                 activityName: "Deep Focus",
                 xpEarned: 60,
-                onDone: onDismiss
+                onDone: {
+                    onComplete(60)
+                    onDismiss()
+                }
             )
         }
     }
@@ -323,13 +327,20 @@ struct DeepFocusView: View {
     private var timerView: some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 32) {
-                // Current task label — animates between sub-tasks as time progresses
-                Text(currentFocusTask.title)
-                    .font(.spCardTitle)
-                    .foregroundStyle(Color.spTextSecondary)
-                    .contentTransition(.opacity)
-                    .animation(.easeInOut(duration: 0.4), value: currentTaskIndex)
-                    .id(currentTaskIndex)
+                // "DEEP FOCUS" label + "Focus on: {task}" — task animates between sub-tasks
+                VStack(spacing: 4) {
+                    Text("DEEP FOCUS")
+                        .font(.spActivityLabel)
+                        .foregroundStyle(Color.spTextSecondary)
+                        .tracking(0.832)
+
+                    Text("Focus on: \(currentFocusTask.title)")
+                        .font(.spCardTitle)
+                        .foregroundStyle(Color.spTextPrimary)
+                        .contentTransition(.opacity)
+                        .animation(.easeInOut(duration: 0.4), value: currentTaskIndex)
+                        .id(currentTaskIndex)
+                }
 
                 // Circular progress ring (240pt)
                 ZStack {
@@ -357,10 +368,21 @@ struct DeepFocusView: View {
                     }
                 }
 
-                // Pause + Done buttons
-                VStack(spacing: 12) {
-                    PrimaryCTA(title: isPaused ? "Resume" : "Pause") {
+                HStack(spacing: 12) {
+                    Button {
                         togglePause()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: isPaused ? "play.fill" : "pause.fill")
+                                .font(.system(size: 14, weight: .bold))
+                            Text(isPaused ? "Resume" : "Pause")
+                                .font(.custom("Nunito-Bold", size: 16))
+                        }
+                        .foregroundStyle(Color.spTextPrimary)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(Color.spPrimary)
+                        .cornerRadius(SP.Radius.pill)
                     }
 
                     Button {
@@ -368,11 +390,14 @@ struct DeepFocusView: View {
                         withAnimation { step = .finishCheck }
                     } label: {
                         Text("I'm done")
-                            .font(.spBody)
+                            .font(.custom("Nunito-Bold", size: 16))
                             .foregroundStyle(Color.spTextSecondary)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(Color.spLockedBadgeBg)
+                            .cornerRadius(SP.Radius.pill)
                     }
                 }
-                .padding(.horizontal, SP.Padding.screenHorizontal)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -392,8 +417,10 @@ struct DeepFocusView: View {
     private var finishCheckView: some View {
         ZStack(alignment: .topTrailing) {
             VStack(spacing: 24) {
-                Text("🤔")
-                    .font(.system(size: 64))
+                // SF Symbol icon instead of emoji
+                Image(systemName: "questionmark.circle.fill")
+                    .font(.system(size: 64, weight: .medium))
+                    .foregroundStyle(Color.spPrimary)
 
                 Text("Did you finish?")
                     .font(.spPageTitle)
@@ -573,5 +600,5 @@ private struct FlowLayout: Layout {
 }
 
 #Preview {
-    DeepFocusView(onDismiss: {})
+    DeepFocusView(onComplete: { _ in }, onDismiss: {})
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct BreathingExerciseView: View {
+    let onComplete: (Int) -> Void
     let onDismiss: () -> Void
 
     private let totalCycles = 3
@@ -19,7 +20,10 @@ struct BreathingExerciseView: View {
             ActivityCompleteView(
                 activityName: "Breathing Exercise",
                 xpEarned: 30,
-                onDone: onDismiss
+                onDone: {
+                    onComplete(30)
+                    onDismiss()
+                }
             )
         } else {
             exerciseContent
@@ -184,5 +188,5 @@ private enum BreathPhase {
 }
 
 #Preview {
-    BreathingExerciseView(onDismiss: {})
+    BreathingExerciseView(onComplete: { _ in }, onDismiss: {})
 }

@@ -4,6 +4,8 @@ struct HomeView: View {
     @State private var selectedMood: MoodType? = nil
     @State private var showBreathingExercise = false
     @State private var showDeepFocus = false
+    // Tracks XP earned from completed activities this session
+    @State private var earnedXP = 0
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -16,10 +18,16 @@ struct HomeView: View {
         .background(Color.spBackground)
         .ignoresSafeArea(edges: .top)
         .fullScreenCover(isPresented: $showBreathingExercise) {
-            BreathingExerciseView(onDismiss: { showBreathingExercise = false })
+            BreathingExerciseView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showBreathingExercise = false }
+            )
         }
         .fullScreenCover(isPresented: $showDeepFocus) {
-            DeepFocusView(onDismiss: { showDeepFocus = false })
+            DeepFocusView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showDeepFocus = false }
+            )
         }
     }
 
@@ -185,7 +193,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.spTextSecondary)
                 }
                 Spacer()
-                XPBadge(earned: 0, total: 195)
+                XPBadge(earned: earnedXP, total: 195)
             }
             .padding(.bottom, 4)
 
