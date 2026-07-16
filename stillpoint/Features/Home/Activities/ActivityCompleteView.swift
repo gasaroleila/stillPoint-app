@@ -7,10 +7,9 @@ struct ActivityCompleteView: View {
 
     @State private var showContent = false
 
+    // Everything vertically centered as one group (icon, text, XP, button)
     var body: some View {
         VStack(spacing: 24) {
-            Spacer()
-
             VStack(spacing: 16) {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 72, weight: .medium))
@@ -37,15 +36,12 @@ struct ActivityCompleteView: View {
             .opacity(showContent ? 1 : 0)
             .offset(y: showContent ? 0 : 20)
 
-            Spacer()
-
             PrimaryCTA(title: "Done", action: onDone)
                 .padding(.horizontal, SP.Padding.screenHorizontal)
                 .opacity(showContent ? 1 : 0)
         }
-        .padding(.bottom, 40)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.spBackground)
+        .background(Color.spBackgroundAlt)
         .onAppear {
             withAnimation(.easeOut(duration: 0.6)) {
                 showContent = true

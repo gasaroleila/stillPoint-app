@@ -238,19 +238,23 @@ Find FIGMA_DESIGN_SYSTEM.md file (at the root) for base design rules used in thi
 
 ---
 
-### 6. Deep Focus (4-step flow)
+### 6. Deep Focus (6-step flow)
 
 **File:** `Features/Home/Activities/DeepFocusView.swift`
 
 All steps: modal, `spBackground`, CloseButton top-right
 
-**Step 1 — Goal Input** (`11:2`): "DEEP FOCUS" label, "What do you need to work on?" title, text input (white bg, 24pt radius), "Set my goal →" PrimaryCTA
+**Step 1 — Task Input**: "DEEP FOCUS" label, "What do you need to work on?" title, large text area (white bg, 24pt radius, placeholder text), file upload section (supports multiple jpg/png/pdf/docx files, displayed as removable chips/thumbnails), "Analyze my task" PrimaryCTA. Files stored locally temporarily and erased after backend returns the task plan.
 
-**Step 2 — Confirm** (`11:253`): Target emoji in 64pt yellow circle, "Focus on: {task}" title, "Start focusing →" PrimaryCTA, "Change task" text link
+**Step 2 — Plan Review**: Backend returns a structured task breakdown (list of sub-tasks with time allocations totaling 20 min). Each item shows task title + allocated minutes. "Start focusing" PrimaryCTA, "Edit" text link (returns to Step 1 to refine prompt or add context). Mock data used until backend integration.
 
-**Step 3 — Timer** (`11:506`): "Focus on: {task}" header, 240pt circular progress ring (`spBorder` track, `spPrimary` progress, 8pt stroke), "19:58 remaining" center text, Pause + "I'm done" buttons
+**Step 3 — Sound Check**: Lightweight checkpoint screen. "Have you set up your focus sounds?" title, brief instruction directing user to iOS Background Sounds (Control Center > Hearing > Background Sounds), "I'm ready" PrimaryCTA.
 
-**Step 4 — Complete** (`11:763`): Thinking emoji, "Did you finish?", "Yes, I'm done!" PrimaryCTA, "Add 5 more minutes" SecondaryCTA, "Resume where I left off" text link
+**Step 4 — Timer**: 240pt circular progress ring (`spBorder` track, `spPrimary` progress, 8pt stroke), "19:58 remaining" center text. Current task title animates in/out on the right side of the screen, transitioning to the next task as its allocated time elapses. Pause + "I'm done" buttons.
+
+**Step 5 — Did you finish?**: Thinking emoji, "Did you finish?", "Yes, I'm done!" PrimaryCTA, "Add 5 more minutes" SecondaryCTA, "Resume where I left off" text link. "Yes" proceeds to Step 6, "Add 5 more minutes" extends timer and returns to Step 4, "Resume" returns to Step 4 at current position.
+
+**Step 6 — Complete**: Reuses `ActivityCompleteView` (activityName: "Deep Focus", xpEarned: 60).
 
 ---
 
@@ -297,7 +301,7 @@ All steps: modal, `spBackground`, CloseButton top-right
 ### Phase 3: Activities
 
 7. Breathing exercise (animated circle, timer logic, cycle progression)
-8. Deep Focus (4-step navigation, timer with circular progress)
+8. Deep Focus (6-step flow: task input with file upload, plan review, sound check, timer with animated task progression, finish check, completion)
 9. Journal (prompt cycling, text editor, word count)
 10. Coloring (canvas with touch regions, color palette, fill logic)
 

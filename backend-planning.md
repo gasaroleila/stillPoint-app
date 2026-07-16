@@ -172,13 +172,9 @@ users/{userId}/reports/{period}      -- e.g., "2026-W29", "2026-07", "2026"
   ├── activityBreakdown: map<string, number>
   └── computedAt: timestamp
 
-activities/{activityId}              -- read-only catalog (seeded once)
-  ├── type: string
-  ├── title: string
-  ├── description: string
-  ├── durationMinutes: number
-  └── xpReward: number
 ```
+
+**Activity catalog:** Hardcoded on the client (`Activity.samples` in `ActivityRepositoryImpl.swift`). May move to Firestore later if we need server-side updates without app releases.
 
 **Why subcollections:** Completions and moods grow unbounded. Subcollections let Firestore paginate and query by date range without loading the entire user document.
 

@@ -1,0 +1,20 @@
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Firebase
+GoogleService-Info.plist
+
+# OS
+.DS_Store
+
+# Node (firebase/functions)
+node_modules/
+firebase/functions/lib/

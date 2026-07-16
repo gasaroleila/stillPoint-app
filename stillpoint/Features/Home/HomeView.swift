@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var selectedMood: MoodType? = nil
     @State private var showBreathingExercise = false
+    @State private var showDeepFocus = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -16,6 +17,9 @@ struct HomeView: View {
         .ignoresSafeArea(edges: .top)
         .fullScreenCover(isPresented: $showBreathingExercise) {
             BreathingExerciseView(onDismiss: { showBreathingExercise = false })
+        }
+        .fullScreenCover(isPresented: $showDeepFocus) {
+            DeepFocusView(onDismiss: { showDeepFocus = false })
         }
     }
 
@@ -207,6 +211,8 @@ struct HomeView: View {
         switch type {
         case .breathing:
             showBreathingExercise = true
+        case .focus:
+            showDeepFocus = true
         default:
             break
         }
