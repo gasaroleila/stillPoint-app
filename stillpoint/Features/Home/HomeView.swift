@@ -5,6 +5,7 @@ struct HomeView: View {
     @State private var showBreathingExercise = false
     @State private var showDeepFocus = false
     @State private var showColoring = false
+    @State private var showJournaling = false
     // Tracks XP earned from completed activities this session
     @State private var earnedXP = 0
 
@@ -34,6 +35,12 @@ struct HomeView: View {
             ColoringView(
                 onComplete: { xp in earnedXP += xp },
                 onDismiss: { showColoring = false }
+            )
+        }
+        .fullScreenCover(isPresented: $showJournaling) {
+            JournalingView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showJournaling = false }
             )
         }
     }
@@ -230,6 +237,8 @@ struct HomeView: View {
             showDeepFocus = true
         case .coloring:
             showColoring = true
+        case .journaling:
+            showJournaling = true
         default:
             break
         }

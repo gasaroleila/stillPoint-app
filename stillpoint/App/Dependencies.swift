@@ -11,14 +11,19 @@ final class Dependencies: ObservableObject {
 
     init(
         auth: any AuthRepository = AuthRepositoryImpl(),
-        activities: any ActivityRepository = ActivityRepositoryImpl(),
-        moods: any MoodRepository = MoodRepositoryImpl(),
-        user: any UserRepository = UserRepositoryImpl()
+        activities: (any ActivityRepository)? = nil,
+        moods: (any MoodRepository)? = nil,
+        user: (any UserRepository)? = nil
     ) {
         self.auth = auth
-        self.activities = activities
-        self.moods = moods
-        self.user = user
+
+        let firestoreService = FirestoreService {
+            auth.currentUserId
+        }
+
+        self.activities = activities ?? ActivityRepositoryImpl(firestore: firestoreService)
+        self.moods = moods ?? MoodRepositoryImpl(firestore: firestoreService)
+        self.user = user ?? UserRepositoryImpl(firestore: firestoreService)
 
         auth.startListening { [weak self] authenticated in
             Task { @MainActor [weak self] in
