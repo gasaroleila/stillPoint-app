@@ -12,6 +12,7 @@ protocol AuthRepository: Sendable {
     func setupMFA(phoneNumber: String) async throws
     func requestPasswordReset(email: String) async throws
     func logout() async throws
+    func startListening(onChange: @escaping @Sendable (Bool) -> Void)
     var isAuthenticated: Bool { get }
     var currentUserId: String? { get }
 }

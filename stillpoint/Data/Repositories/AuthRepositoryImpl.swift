@@ -2,11 +2,16 @@ import Foundation
 import FirebaseFirestore
 
 final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
-    private let authService = AuthService()
-    private let db = Firestore.firestore()
+    private let authService: any AuthServiceProtocol
+    private let db: Firestore
 
     private(set) var isAuthenticated = false
     private(set) var currentUserId: String?
+
+    init(authService: any AuthServiceProtocol = AuthService(), db: Firestore = Firestore.firestore()) {
+        self.authService = authService
+        self.db = db
+    }
 
     func startListening(onChange: @escaping @Sendable (Bool) -> Void) {
         Task {

@@ -4,6 +4,7 @@ struct HomeView: View {
     @State private var selectedMood: MoodType? = nil
     @State private var showBreathingExercise = false
     @State private var showDeepFocus = false
+    @State private var showColoring = false
     // Tracks XP earned from completed activities this session
     @State private var earnedXP = 0
 
@@ -27,6 +28,12 @@ struct HomeView: View {
             DeepFocusView(
                 onComplete: { xp in earnedXP += xp },
                 onDismiss: { showDeepFocus = false }
+            )
+        }
+        .fullScreenCover(isPresented: $showColoring) {
+            ColoringView(
+                onComplete: { xp in earnedXP += xp },
+                onDismiss: { showColoring = false }
             )
         }
     }
@@ -221,6 +228,8 @@ struct HomeView: View {
             showBreathingExercise = true
         case .focus:
             showDeepFocus = true
+        case .coloring:
+            showColoring = true
         default:
             break
         }

@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseAuth
 
-actor AuthService {
+actor AuthService: AuthServiceProtocol {
     private var authStateHandle: AuthStateDidChangeListenerHandle?
     private var _isAuthenticated = false
     private var _currentUserId: String?

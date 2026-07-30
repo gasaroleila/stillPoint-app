@@ -1,4 +1,3 @@
-
 # Stillpoint Backend Plan
 
 **Created: July 15, 2026, 7:46 PM EDT**
@@ -116,6 +115,7 @@ stillPoint-app/                         (repo root)
 ```
 
 **Separation boundaries:**
+
 - `stillpoint/` is compiled by Xcode. It contains only Swift. XcodeGen (`project.yml`) points here for sources.
 - `firebase/` is managed by the Firebase CLI. It contains only TypeScript/Node.js. Deployed via `firebase deploy`.
 - They never import from each other. The only shared contract is the Firestore document schema (documented in this file).

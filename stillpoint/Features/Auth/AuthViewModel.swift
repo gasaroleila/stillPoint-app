@@ -28,15 +28,19 @@ final class AuthViewModel {
     var resetEmail = ""
     var resetEmailSent = false
 
-    private let auth: AuthRepositoryImpl
+    private let auth: any AuthRepository
 
-    init(auth: AuthRepositoryImpl) {
+    init(auth: any AuthRepository) {
         self.auth = auth
     }
 
     func login() async {
         guard !loginEmail.isEmpty, !loginPassword.isEmpty else {
             errorMessage = "Please fill in all fields."
+            return
+        }
+        guard isValidEmail(loginEmail) else {
+            errorMessage = "Please enter a valid email address."
             return
         }
         isLoading = true
@@ -52,6 +56,10 @@ final class AuthViewModel {
     func register() async {
         guard !registerUsername.isEmpty, !registerEmail.isEmpty, !registerPassword.isEmpty else {
             errorMessage = "Please fill in all fields."
+            return
+        }
+        guard isValidEmail(registerEmail) else {
+            errorMessage = "Please enter a valid email address."
             return
         }
         guard registerPassword == registerConfirmPassword else {
@@ -81,6 +89,11 @@ final class AuthViewModel {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+    }
+
+    private func isValidEmail(_ email: String) -> Bool {
+        let parts = email.split(separator: "@")
+        return parts.count == 2 && parts[1].contains(".")
     }
 
     func requestPasswordReset() async {

@@ -37,7 +37,7 @@ Find FIGMA_DESIGN_SYSTEM.md file (at the root) for base design rules used in thi
 | `spChartMedium`       | `#FFE57A`               | Chart bars (partial day)                     |
 | `spChartLight`        | `#FFF3B0`               | Chart bars (low activity)                    |
 | `spChartEmpty`        | `#EDE9DF`               | Chart bars (rest day)                        |
-| `spActivityJournal`   | `#FFF3E0`<br /><br />   | Journal breakdown bg (warm orange)           |
+| `spActivityJournal`   | `#FFF3E0`<br />        | Journal breakdown bg (warm orange)           |
 | `spActivityBreathing` | `#EAF7FD`               | Breathing breakdown bg (light blue)          |
 | `spActivityFocus`     | `#F3EEFF`               | Focus breakdown bg (light purple)            |
 | `spActivityColoring`  | `#FFF0F5`               | Coloring breakdown bg (light pink)           |
