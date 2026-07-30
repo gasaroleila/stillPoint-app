@@ -2,7 +2,6 @@ import SwiftUI
 
 enum AuthScreen: Equatable {
     case login
-    case register
     case forgotPassword
 }
 
@@ -23,6 +22,9 @@ final class AuthViewModel {
     var registerPassword = ""
     var registerConfirmPassword = ""
     var registerDateOfBirth = Calendar.current.date(byAdding: .year, value: -18, to: .now) ?? .now
+    var registerPhoneNumber = ""
+    var agreedToPolicy = false
+    var agreedToDisclaimer = false
 
     // Forgot password
     var resetEmail = ""
@@ -60,10 +62,6 @@ final class AuthViewModel {
         }
         guard isValidEmail(registerEmail) else {
             errorMessage = "Please enter a valid email address."
-            return
-        }
-        guard registerPassword == registerConfirmPassword else {
-            errorMessage = "Passwords do not match."
             return
         }
         guard registerPassword.count >= 6 else {

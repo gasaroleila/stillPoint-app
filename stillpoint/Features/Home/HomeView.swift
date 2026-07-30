@@ -32,32 +32,32 @@ struct HomeView: View {
         .onAppear { Task { await vm.loadProfile() } }
         .fullScreenCover(isPresented: $showBreathingExercise) {
             BreathingExerciseView(
-                onComplete: { xp in handleCompletion(type: .breathing, duration: 120, xp: xp) },
+                onComplete: { _ in handleCompletion(type: .breathing, duration: 120) },
                 onDismiss: { showBreathingExercise = false }
             )
         }
         .fullScreenCover(isPresented: $showDeepFocus) {
             DeepFocusView(
-                onComplete: { xp in handleCompletion(type: .focus, duration: 1200, xp: xp) },
+                onComplete: { _ in handleCompletion(type: .focus, duration: 1200) },
                 onDismiss: { showDeepFocus = false }
             )
         }
         .fullScreenCover(isPresented: $showColoring) {
             ColoringView(
-                onComplete: { xp in handleCompletion(type: .coloring, duration: 300, xp: xp) },
+                onComplete: { _ in handleCompletion(type: .coloring, duration: 300) },
                 onDismiss: { showColoring = false }
             )
         }
         .fullScreenCover(isPresented: $showJournaling) {
             JournalingView(
-                onComplete: { xp in handleCompletion(type: .journaling, duration: 1800, xp: xp) },
+                onComplete: { _ in handleCompletion(type: .journaling, duration: 1800) },
                 onDismiss: { showJournaling = false }
             )
         }
     }
 
-    private func handleCompletion(type: ActivityType, duration: Int, xp: Int) {
-        Task { await vm.logActivityCompletion(type: type, durationSeconds: duration, xp: xp) }
+    private func handleCompletion(type: ActivityType, duration: Int) {
+        Task { await vm.logActivityCompletion(type: type, durationSeconds: duration) }
     }
 
     // MARK: - Header

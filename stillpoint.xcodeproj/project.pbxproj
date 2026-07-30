@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02EBA740C39E4A533852FAE1 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB938F7AB47BE9E204496B5 /* RegisterView.swift */; };
 		11726FF3F0276A85C78A5395 /* ForgotPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4B9A650FB15BE218C5C6CD4 /* ForgotPasswordView.swift */; };
 		141E89184D2E324F6DE566AF /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9629664F52025E29FCA30B /* FirestoreService.swift */; };
 		1422B48B98F65E3EA14A3D56 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C355C507CC89ADEDA6C964D /* Mood.swift */; };
@@ -26,6 +25,7 @@
 		35E48E37803680CFC74F3EE9 /* ActivityCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE3722C2D84CA66E15C17DB /* ActivityCompletion.swift */; };
 		3C29FB6DEE905130C51E6D61 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38010B409F9D6788760163E7 /* AuthRepository.swift */; };
 		3F69A1C77A6458EAC5A9E731 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 168B30261892F1241D350238 /* FirebaseFunctions */; };
+		4453DE9E48BA041272D0B79A /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55508A6AB2F58FE21EAFF4AE /* OnboardingFlowView.swift */; };
 		480C7934ED811B201871BCA0 /* Streak.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3331C0CA891739678E4AEB6 /* Streak.swift */; };
 		4AF706EC0DBED3B09CF1114E /* ColoringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 786937D1904046E57E7B865C /* ColoringView.swift */; };
 		528F7670055ED14503510684 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0D2192FD0EC71D4A00E2A4CE /* Nunito-SemiBold.ttf */; };
@@ -51,18 +51,21 @@
 		88097A0CD576C85D147E6032 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FA9F9B0426528E0EBD486 /* Report.swift */; };
 		884331003F1BDBE0F8FE96C6 /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D319BB12144BD99839269FE5 /* CloseButton.swift */; };
 		8BD8D94319F7324D7CC34868 /* PillTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3D814DC772059425EB6C9 /* PillTag.swift */; };
+		8F2DBAEB3B1A4D8164D73E20 /* ChooseCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F086C6C89F71A8C9A860D7 /* ChooseCharacterView.swift */; };
 		96E1BABA53862B5DBFB3C8DF /* Color+stillpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDBCC1BBDA30A6F39AF7DC4C /* Color+stillpoint.swift */; };
 		9EFDFD47A6CDB5D2BD6CE112 /* DataIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FF4DF76A06FD8D34EDB10D /* DataIntegrationTests.swift */; };
 		9FEBED4BE160A3F380E14B5F /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90A8309DD818B3DD5BCD0C0 /* UserRepository.swift */; };
 		A0C6B05ACFA48215F26550EE /* AuthTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725F278109258114D72A1F95 /* AuthTextField.swift */; };
 		A1D3568ED1C1E918BDA7772B /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72F4BE53E7CA8CCDD7B65FF6 /* Nunito-ExtraBold.ttf */; };
 		A394E5D58812DFF275637E7F /* AuthRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE3E461C1B2D48A52573AF5 /* AuthRepositoryImpl.swift */; };
+		AB6CCF632C386E458C783C30 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12CFBE583074DD6FBA2072E /* RegisterView.swift */; };
 		B00506B1EE6A390677EC2971 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618D6278B5CEA2DA998B1638 /* Badge.swift */; };
 		B7FA984BF2B2B65F6AC679C6 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EB92025EEB4E3C391AFB75B /* AuthService.swift */; };
 		BA86ABA43C761A5180748661 /* Font+stillpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = D01F0A30ECEF910101E1407A /* Font+stillpoint.swift */; };
 		BB28F1E0AF57A3291CBF4EFA /* MoodRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE942CE8228973F672259FBC /* MoodRepository.swift */; };
 		BB2D125A84013C47FF922226 /* SegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493CB5462DCC9F9ABBC9DCC8 /* SegmentedControl.swift */; };
 		BFA32D52DBEC9C8BB3764C9A /* PrimaryCTA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6866E05F87E746CF5B6FB45A /* PrimaryCTA.swift */; };
+		C088334AEE02490BDBDF284A /* CustomizeCharacterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC912069165F24FA7585E42 /* CustomizeCharacterView.swift */; };
 		C1BB46C5A36DBF5178E86C4B /* AuthRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D34A74B6CD5F59F0AEEDE8 /* AuthRepositoryTests.swift */; };
 		C2B8EE56618E81622B4DEF90 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C19A8B833B864FE70768E6 /* UserProfile.swift */; };
 		C3068AB8DC2302A6BA2FB642 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D31593FB2780AE2755143D /* LoginView.swift */; };
@@ -75,6 +78,7 @@
 		D486866B12E394517D235476 /* XPBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8B41DE63BF8CDC2F81417E /* XPBadge.swift */; };
 		D5561640664CAF7741197AA2 /* DeepFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96743A4A9416FB42BE939477 /* DeepFocusView.swift */; };
 		DA0CC4C97E4A50F1C528C24E /* AuthIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA8B6712053AD7B681AAE1E /* AuthIntegrationTests.swift */; };
+		DEECBA548934849784C30340 /* MFAView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F6DECCC94CDCFA6D1FE16C4 /* MFAView.swift */; };
 		DFD1AA6ED9CAABE542B195C5 /* DesignConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB815D617329D377C5FAA65B /* DesignConstants.swift */; };
 		E34269D82CBDC7E54F73C0D9 /* ActivityCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FA5EE8C52D6F623CE48829 /* ActivityCard.swift */; };
 		E68639D7D80CC931725C8971 /* GamificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A64B1B855E6938F96C120B /* GamificationStatus.swift */; };
@@ -106,6 +110,7 @@
 		27A64B1B855E6938F96C120B /* GamificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamificationStatus.swift; sourceTree = "<group>"; };
 		303A1BDDFF848BDA08B6B117 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		31C19A8B833B864FE70768E6 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		33F086C6C89F71A8C9A860D7 /* ChooseCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseCharacterView.swift; sourceTree = "<group>"; };
 		38010B409F9D6788760163E7 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
 		38D10B76F207E12556E58B3E /* stillpointApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stillpointApp.swift; sourceTree = "<group>"; };
 		3AB4B6B148A4A488EC95F644 /* JournalingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JournalingView.swift; sourceTree = "<group>"; };
@@ -115,10 +120,10 @@
 		452754C7956698AEBFAB7BA1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		493CB5462DCC9F9ABBC9DCC8 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		541BEB226C245E58F06836C0 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
+		55508A6AB2F58FE21EAFF4AE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		618D6278B5CEA2DA998B1638 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		681D8E6BE129B0BEE084864C /* BadgeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeItem.swift; sourceTree = "<group>"; };
 		6866E05F87E746CF5B6FB45A /* PrimaryCTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryCTA.swift; sourceTree = "<group>"; };
-		6AB938F7AB47BE9E204496B5 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		6C355C507CC89ADEDA6C964D /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
 		6FD48E58D1ADB6723C8EFC79 /* CharacterSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSelection.swift; sourceTree = "<group>"; };
 		71BA03CE4B238F110B65DBA6 /* Nunito-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Black.ttf"; sourceTree = "<group>"; };
@@ -129,6 +134,7 @@
 		786937D1904046E57E7B865C /* ColoringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoringView.swift; sourceTree = "<group>"; };
 		7BB9F27743EEC556E647ECED /* stillpoint.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = stillpoint.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE3E461C1B2D48A52573AF5 /* AuthRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepositoryImpl.swift; sourceTree = "<group>"; };
+		7F6DECCC94CDCFA6D1FE16C4 /* MFAView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFAView.swift; sourceTree = "<group>"; };
 		7FE3722C2D84CA66E15C17DB /* ActivityCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCompletion.swift; sourceTree = "<group>"; };
 		82B4CE1AE96033A0A81A5F12 /* ActivityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRepository.swift; sourceTree = "<group>"; };
 		836858CCC148B74DA956834D /* SecondaryCTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryCTA.swift; sourceTree = "<group>"; };
@@ -137,6 +143,7 @@
 		8A9FA9F9B0426528E0EBD486 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
 		9372639BF26CCA70E2E812DA /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		96743A4A9416FB42BE939477 /* DeepFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepFocusView.swift; sourceTree = "<group>"; };
+		A12CFBE583074DD6FBA2072E /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		AAADA6C5D252DB3122C1615F /* stillpointTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = stillpointTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC595E134D5A09644DB35503 /* Dependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		AF9629664F52025E29FCA30B /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
@@ -150,6 +157,7 @@
 		C3FA5EE8C52D6F623CE48829 /* ActivityCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCard.swift; sourceTree = "<group>"; };
 		CD4A999A60D22F9B24F5EA7B /* UserRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepositoryImpl.swift; sourceTree = "<group>"; };
 		CE942CE8228973F672259FBC /* MoodRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRepository.swift; sourceTree = "<group>"; };
+		CEC912069165F24FA7585E42 /* CustomizeCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeCharacterView.swift; sourceTree = "<group>"; };
 		CFF3D814DC772059425EB6C9 /* PillTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PillTag.swift; sourceTree = "<group>"; };
 		D01F0A30ECEF910101E1407A /* Font+stillpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+stillpoint.swift"; sourceTree = "<group>"; };
 		D0C073DC7DC73EF137A3BFD1 /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
@@ -190,6 +198,11 @@
 			isa = PBXGroup;
 			children = (
 				839DB368263B2498B6D47FBB /* AppLoadingView.swift */,
+				33F086C6C89F71A8C9A860D7 /* ChooseCharacterView.swift */,
+				CEC912069165F24FA7585E42 /* CustomizeCharacterView.swift */,
+				7F6DECCC94CDCFA6D1FE16C4 /* MFAView.swift */,
+				55508A6AB2F58FE21EAFF4AE /* OnboardingFlowView.swift */,
+				A12CFBE583074DD6FBA2072E /* RegisterView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -233,7 +246,6 @@
 				9372639BF26CCA70E2E812DA /* AuthViewModel.swift */,
 				E4B9A650FB15BE218C5C6CD4 /* ForgotPasswordView.swift */,
 				71D31593FB2780AE2755143D /* LoginView.swift */,
-				6AB938F7AB47BE9E204496B5 /* RegisterView.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -632,10 +644,12 @@
 				2E38C7D999BD91F2A68CA707 /* BadgeItem.swift in Sources */,
 				18A2059A666638279B79EA0D /* BreathingExerciseView.swift in Sources */,
 				67FFF59B58B3738311604D9A /* CharacterSelection.swift in Sources */,
+				8F2DBAEB3B1A4D8164D73E20 /* ChooseCharacterView.swift in Sources */,
 				884331003F1BDBE0F8FE96C6 /* CloseButton.swift in Sources */,
 				96E1BABA53862B5DBFB3C8DF /* Color+stillpoint.swift in Sources */,
 				4AF706EC0DBED3B09CF1114E /* ColoringView.swift in Sources */,
 				D08699B2326A8F864BE0CA7E /* ContentView.swift in Sources */,
+				C088334AEE02490BDBDF284A /* CustomizeCharacterView.swift in Sources */,
 				D5561640664CAF7741197AA2 /* DeepFocusView.swift in Sources */,
 				682D9A9E449453B6861A4A65 /* Dependencies.swift in Sources */,
 				DFD1AA6ED9CAABE542B195C5 /* DesignConstants.swift in Sources */,
@@ -649,14 +663,16 @@
 				18113907FBC1B58ACF94AC08 /* JourneyView.swift in Sources */,
 				5E2B59C1F0C611C2F3B53EE1 /* LocalJournalEntry.swift in Sources */,
 				C3068AB8DC2302A6BA2FB642 /* LoginView.swift in Sources */,
+				DEECBA548934849784C30340 /* MFAView.swift in Sources */,
 				1422B48B98F65E3EA14A3D56 /* Mood.swift in Sources */,
 				BB28F1E0AF57A3291CBF4EFA /* MoodRepository.swift in Sources */,
 				2962E4B9087ACA10E8658675 /* MoodRepositoryImpl.swift in Sources */,
+				4453DE9E48BA041272D0B79A /* OnboardingFlowView.swift in Sources */,
 				8BD8D94319F7324D7CC34868 /* PillTag.swift in Sources */,
 				BFA32D52DBEC9C8BB3764C9A /* PrimaryCTA.swift in Sources */,
 				F10F656F5079442277A80FCB /* ProfileView.swift in Sources */,
 				EF0C47AF3A6647C88C728B0F /* ProfileViewModel.swift in Sources */,
-				02EBA740C39E4A533852FAE1 /* RegisterView.swift in Sources */,
+				AB6CCF632C386E458C783C30 /* RegisterView.swift in Sources */,
 				88097A0CD576C85D147E6032 /* Report.swift in Sources */,
 				C5ED755B927EE26FF0CE6C0B /* ScheduleView.swift in Sources */,
 				57B96D57B223EF487F3CB612 /* SecondaryCTA.swift in Sources */,

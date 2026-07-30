@@ -8,7 +8,7 @@ final class ProfileViewModel {
     var level: Int = 1
     var streakDays: Int = 0
     var totalActivities: Int = 0
-    var badges: [Badge] = []
+    var earnedBadgeIds: Set<String> = []
     var errorMessage: String?
 
     private let user: any UserRepository
@@ -32,7 +32,8 @@ final class ProfileViewModel {
             let streak = try await user.getStreak()
             streakDays = streak.currentDays
 
-            badges = try await user.getBadges()
+            let badges = try await user.getBadges()
+            earnedBadgeIds = Set(badges.filter(\.isEarned).map(\.name))
         } catch {
             errorMessage = error.localizedDescription
         }

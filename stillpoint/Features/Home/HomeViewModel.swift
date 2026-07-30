@@ -8,8 +8,15 @@ final class HomeViewModel {
     var totalXP: Int = 0
     var selectedMood: MoodType? = nil
     var moodConfirmed = false
-    var earnedXP: Int = 0
     var completedActivities: Set<ActivityType> = []
+
+    private static let xpPerActivity: [ActivityType: Int] = [
+        .breathing: 30, .focus: 60, .coloring: 25, .journaling: 80
+    ]
+
+    var earnedXP: Int {
+        completedActivities.reduce(0) { $0 + (Self.xpPerActivity[$1] ?? 0) }
+    }
     var errorMessage: String?
 
     private let moods: any MoodRepository
@@ -32,6 +39,7 @@ final class HomeViewModel {
             streakDays = streak.currentDays
 
             await loadTodayMood()
+            await loadTodayCompletions()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -52,6 +60,18 @@ final class HomeViewModel {
         }
     }
 
+    private func loadTodayCompletions() async {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        do {
+            let completions = try await activities.getCompletions(from: startOfDay, to: endOfDay)
+            completedActivities = Set(completions.map(\.activityType))
+        } catch {
+            // Non-critical
+        }
+    }
+
     func confirmMood() async {
         guard let mood = selectedMood else { return }
         do {
@@ -62,10 +82,9 @@ final class HomeViewModel {
         }
     }
 
-    func logActivityCompletion(type: ActivityType, durationSeconds: Int, xp: Int) async {
+    func logActivityCompletion(type: ActivityType, durationSeconds: Int) async {
         do {
             try await activities.logCompletion(activityType: type, duration: durationSeconds)
-            earnedXP += xp
             completedActivities.insert(type)
         } catch {
             errorMessage = error.localizedDescription

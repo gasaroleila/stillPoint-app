@@ -26,7 +26,7 @@ struct ProfileView: View {
             .padding(.top, 48)
         }
         .background(Color.spBackground)
-        .task { await vm.load() }
+        .onAppear { Task { await vm.load() } }
     }
 
     private var logoutButton: some View {
@@ -210,26 +210,30 @@ struct ProfileView: View {
         .padding(.horizontal, SP.Padding.screenHorizontal)
     }
 
-    // MARK: - Mock data
+    // MARK: - Badge definitions
 
     private var monthlyBadges: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "streak-freak", label: "7-Day Streak", isEarned: true),
-            ProfileBadge(iconAsset: "breath-master", label: "Breath Master", isEarned: true),
-            ProfileBadge(iconAsset: "coloring-master", label: "First Color", isEarned: true),
-            ProfileBadge(iconAsset: "deep-thinker", label: "Deep Thinker", isEarned: false),
-            ProfileBadge(iconAsset: "mood-tracking", label: "Mood Tracker", isEarned: false),
-        ]
+            ProfileBadge(iconAsset: "streak-freak", label: "7-Day Streak", badgeName: "Week Warrior"),
+            ProfileBadge(iconAsset: "breath-master", label: "Breath Master", badgeName: "Breath Master"),
+            ProfileBadge(iconAsset: "coloring-master", label: "First Color", badgeName: "Color Artist"),
+            ProfileBadge(iconAsset: "deep-thinker", label: "Deep Thinker", badgeName: "Monthly Master"),
+            ProfileBadge(iconAsset: "mood-tracking", label: "Mood Tracker", badgeName: "First Steps"),
+        ].map { badge in
+            ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
+        }
     }
 
     private var activityAwards: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "focus-completion", label: "First Focus", isEarned: true),
-            ProfileBadge(iconAsset: "breath-completion", label: "Calm Breath", isEarned: true),
-            ProfileBadge(iconAsset: "daily-xp-completion", label: "Goal Getter", isEarned: true),
-            ProfileBadge(iconAsset: "weekly-consistency", label: "Week Warrior", isEarned: false),
-            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "XP Hunter", isEarned: false),
-        ]
+            ProfileBadge(iconAsset: "focus-completion", label: "First Focus", badgeName: "Focus Champion"),
+            ProfileBadge(iconAsset: "breath-completion", label: "Calm Breath", badgeName: "Breath Master"),
+            ProfileBadge(iconAsset: "daily-xp-completion", label: "Goal Getter", badgeName: "Rising Star"),
+            ProfileBadge(iconAsset: "weekly-consistency", label: "Week Warrior", badgeName: "Week Warrior"),
+            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "XP Hunter", badgeName: "XP Hunter"),
+        ].map { badge in
+            ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
+        }
     }
 }
 
@@ -237,7 +241,8 @@ private struct ProfileBadge: Identifiable {
     let id = UUID()
     let iconAsset: String
     let label: String
-    let isEarned: Bool
+    var isEarned: Bool = false
+    var badgeName: String = ""
 }
 
 #Preview {

@@ -8,8 +8,6 @@ struct AuthContainerView: View {
             switch viewModel.screen {
             case .login:
                 LoginView(viewModel: viewModel)
-            case .register:
-                RegisterView(viewModel: viewModel)
             case .forgotPassword:
                 ForgotPasswordView(viewModel: viewModel)
             }
