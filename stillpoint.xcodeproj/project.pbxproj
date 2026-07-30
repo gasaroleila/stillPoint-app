@@ -34,6 +34,7 @@
 		596D4354279F02513F46C7C5 /* MockAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B137FCAB292CBC235350A335 /* MockAuthService.swift */; };
 		5B50470C7F8BCDF39DF28F2E /* ActivityRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B4CE1AE96033A0A81A5F12 /* ActivityRepository.swift */; };
 		5E2B59C1F0C611C2F3B53EE1 /* LocalJournalEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE34A9062BE5AD0CEC22777D /* LocalJournalEntry.swift */; };
+		5EF76915F26B8639D9DF8E7C /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFDB44CE71A793C7604E37A /* HomeViewModel.swift */; };
 		5FEA7673EB270CC5A5697BE6 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5F09846DC193F222C64F85 /* SectionCard.swift */; };
 		632A3C08C7E8A54B4438F5DD /* StatsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFE39580EFB64E83059659F7 /* StatsRow.swift */; };
 		63B6C0FF532F80439E9926D3 /* UserRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD4A999A60D22F9B24F5EA7B /* UserRepositoryImpl.swift */; };
@@ -68,6 +69,7 @@
 		C5ED755B927EE26FF0CE6C0B /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541BEB226C245E58F06836C0 /* ScheduleView.swift */; };
 		C92D045543013989829AC63C /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FDC7A286EBFD9E5102BA31BA /* Nunito-Regular.ttf */; };
 		CB81293F2CE7CDAE63B5D9DC /* AuthViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7804420B04ABD478B3D6EFDC /* AuthViewModelTests.swift */; };
+		CD219F2A539ED988E93A5EFB /* AppLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839DB368263B2498B6D47FBB /* AppLoadingView.swift */; };
 		D057BC9A39AEDA2EF2C31D2A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9472D036C2EEDC9D974875 /* FirebaseFirestore */; };
 		D08699B2326A8F864BE0CA7E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303A1BDDFF848BDA08B6B117 /* ContentView.swift */; };
 		D486866B12E394517D235476 /* XPBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8B41DE63BF8CDC2F81417E /* XPBadge.swift */; };
@@ -77,6 +79,7 @@
 		E34269D82CBDC7E54F73C0D9 /* ActivityCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3FA5EE8C52D6F623CE48829 /* ActivityCard.swift */; };
 		E68639D7D80CC931725C8971 /* GamificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A64B1B855E6938F96C120B /* GamificationStatus.swift */; };
 		E746E280FFA7394114E16FE7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E246BCD68BCA9ED728C7757B /* GoogleService-Info.plist */; };
+		EF0C47AF3A6647C88C728B0F /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012AB3FEDE90F0FC2AD53799 /* ProfileViewModel.swift */; };
 		F10F656F5079442277A80FCB /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452754C7956698AEBFAB7BA1 /* ProfileView.swift */; };
 		FAFFE0998C6BB1927EC18BE9 /* stillpointApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D10B76F207E12556E58B3E /* stillpointApp.swift */; };
 /* End PBXBuildFile section */
@@ -92,6 +95,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		012AB3FEDE90F0FC2AD53799 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		051DEC6759A876A06406DDEA /* Activity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		0D2192FD0EC71D4A00E2A4CE /* Nunito-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-SemiBold.ttf"; sourceTree = "<group>"; };
 		0EB92025EEB4E3C391AFB75B /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -128,6 +132,7 @@
 		7FE3722C2D84CA66E15C17DB /* ActivityCompletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCompletion.swift; sourceTree = "<group>"; };
 		82B4CE1AE96033A0A81A5F12 /* ActivityRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRepository.swift; sourceTree = "<group>"; };
 		836858CCC148B74DA956834D /* SecondaryCTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryCTA.swift; sourceTree = "<group>"; };
+		839DB368263B2498B6D47FBB /* AppLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoadingView.swift; sourceTree = "<group>"; };
 		8787CA23442FD8F2E0B982DE /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
 		8A9FA9F9B0426528E0EBD486 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
 		9372639BF26CCA70E2E812DA /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -158,6 +163,7 @@
 		E3ED051EF0F34B1B82372C46 /* BreathingExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingExerciseView.swift; sourceTree = "<group>"; };
 		E4B9A650FB15BE218C5C6CD4 /* ForgotPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgotPasswordView.swift; sourceTree = "<group>"; };
 		ECA8B6712053AD7B681AAE1E /* AuthIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthIntegrationTests.swift; sourceTree = "<group>"; };
+		EDFDB44CE71A793C7604E37A /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		EF1CB9F95D188EA8C4257E71 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F531D37BEA00BD72303491CC /* ActivityCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCompleteView.swift; sourceTree = "<group>"; };
 		F74745676D3203A9F0926A50 /* Nunito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Bold.ttf"; sourceTree = "<group>"; };
@@ -180,6 +186,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0CBB9D2511773C553BD9C750 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				839DB368263B2498B6D47FBB /* AppLoadingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		16E611A3794281AF57E44C21 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -260,6 +274,7 @@
 				47A425945A1D5A185B384FD9 /* Auth */,
 				A46978625148209CAFA6F4BF /* Home */,
 				5C912FA45E98942888D4A586 /* Journey */,
+				0CBB9D2511773C553BD9C750 /* Onboarding */,
 				F9EC8D4405C62C883BA36FF7 /* Profile */,
 				F5E1CC72D98B3A04CD027362 /* Schedule */,
 			);
@@ -413,6 +428,7 @@
 			isa = PBXGroup;
 			children = (
 				EF1CB9F95D188EA8C4257E71 /* HomeView.swift */,
+				EDFDB44CE71A793C7604E37A /* HomeViewModel.swift */,
 				AE9991DECD757B1B99A7B4B5 /* Activities */,
 			);
 			path = Home;
@@ -469,6 +485,7 @@
 			isa = PBXGroup;
 			children = (
 				452754C7956698AEBFAB7BA1 /* ProfileView.swift */,
+				012AB3FEDE90F0FC2AD53799 /* ProfileViewModel.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -603,6 +620,7 @@
 				5B50470C7F8BCDF39DF28F2E /* ActivityRepository.swift in Sources */,
 				2444FB29D663CAFC9C396DC2 /* ActivityRepositoryImpl.swift in Sources */,
 				297505A33562988BC0E84814 /* ActivitySuggestion.swift in Sources */,
+				CD219F2A539ED988E93A5EFB /* AppLoadingView.swift in Sources */,
 				1E8E02D6E4B167B526609929 /* AuthContainerView.swift in Sources */,
 				3C29FB6DEE905130C51E6D61 /* AuthRepository.swift in Sources */,
 				A394E5D58812DFF275637E7F /* AuthRepositoryImpl.swift in Sources */,
@@ -626,6 +644,7 @@
 				11726FF3F0276A85C78A5395 /* ForgotPasswordView.swift in Sources */,
 				E68639D7D80CC931725C8971 /* GamificationStatus.swift in Sources */,
 				31EE76A8807F4DACD573266A /* HomeView.swift in Sources */,
+				5EF76915F26B8639D9DF8E7C /* HomeViewModel.swift in Sources */,
 				78C2FC406E4D3A90B8EC1A7B /* JournalingView.swift in Sources */,
 				18113907FBC1B58ACF94AC08 /* JourneyView.swift in Sources */,
 				5E2B59C1F0C611C2F3B53EE1 /* LocalJournalEntry.swift in Sources */,
@@ -636,6 +655,7 @@
 				8BD8D94319F7324D7CC34868 /* PillTag.swift in Sources */,
 				BFA32D52DBEC9C8BB3764C9A /* PrimaryCTA.swift in Sources */,
 				F10F656F5079442277A80FCB /* ProfileView.swift in Sources */,
+				EF0C47AF3A6647C88C728B0F /* ProfileViewModel.swift in Sources */,
 				02EBA740C39E4A533852FAE1 /* RegisterView.swift in Sources */,
 				88097A0CD576C85D147E6032 /* Report.swift in Sources */,
 				C5ED755B927EE26FF0CE6C0B /* ScheduleView.swift in Sources */,

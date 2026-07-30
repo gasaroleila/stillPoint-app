@@ -1,13 +1,23 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedMood: MoodType? = nil
+    @EnvironmentObject private var dependencies: Dependencies
+    @State private var viewModel: HomeViewModel?
     @State private var showBreathingExercise = false
     @State private var showDeepFocus = false
     @State private var showColoring = false
     @State private var showJournaling = false
-    // Tracks XP earned from completed activities this session
-    @State private var earnedXP = 0
+
+    private var vm: HomeViewModel {
+        if let viewModel { return viewModel }
+        let created = HomeViewModel(
+            moods: dependencies.moods,
+            activities: dependencies.activities,
+            user: dependencies.user
+        )
+        DispatchQueue.main.async { viewModel = created }
+        return created
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -19,30 +29,35 @@ struct HomeView: View {
         }
         .background(Color.spBackground)
         .ignoresSafeArea(edges: .top)
+        .onAppear { Task { await vm.loadProfile() } }
         .fullScreenCover(isPresented: $showBreathingExercise) {
             BreathingExerciseView(
-                onComplete: { xp in earnedXP += xp },
+                onComplete: { xp in handleCompletion(type: .breathing, duration: 120, xp: xp) },
                 onDismiss: { showBreathingExercise = false }
             )
         }
         .fullScreenCover(isPresented: $showDeepFocus) {
             DeepFocusView(
-                onComplete: { xp in earnedXP += xp },
+                onComplete: { xp in handleCompletion(type: .focus, duration: 1200, xp: xp) },
                 onDismiss: { showDeepFocus = false }
             )
         }
         .fullScreenCover(isPresented: $showColoring) {
             ColoringView(
-                onComplete: { xp in earnedXP += xp },
+                onComplete: { xp in handleCompletion(type: .coloring, duration: 300, xp: xp) },
                 onDismiss: { showColoring = false }
             )
         }
         .fullScreenCover(isPresented: $showJournaling) {
             JournalingView(
-                onComplete: { xp in earnedXP += xp },
+                onComplete: { xp in handleCompletion(type: .journaling, duration: 1800, xp: xp) },
                 onDismiss: { showJournaling = false }
             )
         }
+    }
+
+    private func handleCompletion(type: ActivityType, duration: Int, xp: Int) {
+        Task { await vm.logActivityCompletion(type: type, durationSeconds: duration, xp: xp) }
     }
 
     // MARK: - Header
@@ -66,7 +81,7 @@ struct HomeView: View {
                     Image(systemName: "flame.fill")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(Color.white)
-                    Text("7")
+                    Text("\(vm.streakDays)")
                         .font(.custom("Nunito-Black", size: 22.4))
                         .foregroundStyle(Color.white)
                 }
@@ -87,7 +102,7 @@ struct HomeView: View {
             .padding(.bottom, 16)
 
             VStack(spacing: 0) {
-                Text("Good evening, Dev")
+                Text("Good evening, \(vm.userName)")
                     .font(.spGreeting)
                     .foregroundStyle(Color.white.opacity(0.7))
                 Text("How do you feel?")
@@ -107,7 +122,7 @@ struct HomeView: View {
     private var moodSection: some View {
         VStack(spacing: 0) {
             Group {
-                if let selectedMood {
+                if let selectedMood = vm.selectedMood {
                     moodCompact(selectedMood)
                 } else {
                     moodRow
@@ -139,7 +154,7 @@ struct HomeView: View {
     private func moodButton(_ mood: MoodType) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                selectedMood = mood
+                vm.selectedMood = mood
             }
         } label: {
             VStack(spacing: 7) {
@@ -179,7 +194,7 @@ struct HomeView: View {
             }
 
             Button {
-                // confirm — placeholder for future action
+                Task { await vm.confirmMood() }
             } label: {
                 Image(systemName: "checkmark")
                     .font(.system(size: 12, weight: .bold))
@@ -207,7 +222,7 @@ struct HomeView: View {
                         .foregroundStyle(Color.spTextSecondary)
                 }
                 Spacer()
-                XPBadge(earned: earnedXP, total: 195)
+                XPBadge(earned: vm.earnedXP, total: 195)
             }
             .padding(.bottom, 4)
 
@@ -218,9 +233,12 @@ struct HomeView: View {
                     description: activity.description,
                     durationText: activity.durationText,
                     xpText: activity.xpText,
+                    isCompleted: vm.completedActivities.contains(activity.type),
                     action: { handleActivityTap(activity.type) }
                 )
             }
+
+
         }
         .padding(.horizontal, SP.Padding.screenHorizontal)
         .padding(.top, 16)
@@ -293,4 +311,5 @@ private struct HomeActivity {
 
 #Preview {
     HomeView()
+        .environmentObject(Dependencies())
 }

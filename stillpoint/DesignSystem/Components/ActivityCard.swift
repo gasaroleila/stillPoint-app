@@ -6,6 +6,7 @@ struct ActivityCard: View {
     let description: String
     let durationText: String
     let xpText: String
+    var isCompleted: Bool = false
     let action: () -> Void
 
     var body: some View {
@@ -18,7 +19,7 @@ struct ActivityCard: View {
                     .frame(width: 24, height: 24)
                     .foregroundStyle(Color.spTextPrimary)
                     .frame(width: SP.Size.activityIcon, height: SP.Size.activityIcon)
-                    .background(Color.spBackground)
+                    .background(isCompleted ? Color.spPrimaryLight : Color.spBackground)
                     .cornerRadius(SP.Radius.icon)
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -33,13 +34,13 @@ struct ActivityCard: View {
 
                     HStack(spacing: 8) {
                         PillTag(text: durationText, style: .duration)
-                        PillTag(text: xpText, style: .xp)
+                        PillTag(text: xpText, style: isCompleted ? .xpCompleted : .xp)
                     }
                     .padding(.top, 6)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                Image(systemName: "chevron.right")
+                Image(systemName: isCompleted ? "checkmark" : "chevron.right")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(Color.spTextPrimary)
                     .frame(width: SP.Size.playButton, height: SP.Size.playButton)
@@ -49,7 +50,18 @@ struct ActivityCard: View {
             .padding(SP.Padding.card)
             .background(Color.white)
             .cornerRadius(SP.Radius.card)
-            .shadow(color: .black.opacity(SP.Shadow.cardOpacity), radius: 8, x: 0, y: 2)
+            .overlay(
+                isCompleted
+                    ? RoundedRectangle(cornerRadius: SP.Radius.card)
+                        .stroke(Color.spPrimary, lineWidth: 0.78)
+                    : nil
+            )
+            .shadow(
+                color: isCompleted
+                    ? Color.spPrimary.opacity(0.18)
+                    : .black.opacity(SP.Shadow.cardOpacity),
+                radius: 8, x: 0, y: 2
+            )
         }
         .buttonStyle(.plain)
     }

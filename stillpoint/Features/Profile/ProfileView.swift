@@ -2,6 +2,14 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var dependencies: Dependencies
+    @State private var viewModel: ProfileViewModel?
+
+    private var vm: ProfileViewModel {
+        if let viewModel { return viewModel }
+        let created = ProfileViewModel(user: dependencies.user)
+        DispatchQueue.main.async { viewModel = created }
+        return created
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -18,6 +26,7 @@ struct ProfileView: View {
             .padding(.top, 48)
         }
         .background(Color.spBackground)
+        .task { await vm.load() }
     }
 
     private var logoutButton: some View {
@@ -103,10 +112,10 @@ struct ProfileView: View {
             .frame(height: 200)
 
             VStack(spacing: 2) {
-                Text("Anne")
+                Text(vm.userName)
                     .font(.custom("Nunito-Black", size: 19.2))
                     .foregroundStyle(Color.spTextPrimary)
-                Text("@anne · Joined June 2026")
+                Text("@\(vm.userName.lowercased()) · Joined June 2026")
                     .font(.custom("Nunito-SemiBold", size: 11.5))
                     .foregroundStyle(Color.spTextSecondary)
             }
@@ -121,7 +130,7 @@ struct ProfileView: View {
     }
 
     private var levelPill: some View {
-        Text("LVL 4 · 308 XP")
+        Text(vm.levelDisplay)
             .font(.custom("Nunito-ExtraBold", size: 10.4))
             .tracking(0.832)
             .foregroundStyle(Color.white)
@@ -139,10 +148,10 @@ struct ProfileView: View {
                 columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
                 spacing: 12
             ) {
-                overviewCell(icon: "flame.fill", value: "7", label: "Day Streak")
-                overviewCell(icon: "bolt.fill", value: "308", label: "Total XP")
+                overviewCell(icon: "flame.fill", value: "\(vm.streakDays)", label: "Day Streak")
+                overviewCell(icon: "bolt.fill", value: "\(vm.xp)", label: "Total XP")
                 overviewCell(icon: "trophy.fill", value: "Gold", label: "League")
-                overviewCell(icon: "star.fill", value: "21", label: "Activities")
+                overviewCell(icon: "star.fill", value: "\(vm.totalActivities)", label: "Activities")
             }
         }
         .padding(.horizontal, SP.Padding.screenHorizontal)
@@ -233,4 +242,5 @@ private struct ProfileBadge: Identifiable {
 
 #Preview {
     ProfileView()
+        .environmentObject(Dependencies())
 }

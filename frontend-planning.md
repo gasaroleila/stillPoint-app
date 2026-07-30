@@ -37,7 +37,7 @@ Find FIGMA_DESIGN_SYSTEM.md file (at the root) for base design rules used in thi
 | `spChartMedium`       | `#FFE57A`               | Chart bars (partial day)                     |
 | `spChartLight`        | `#FFF3B0`               | Chart bars (low activity)                    |
 | `spChartEmpty`        | `#EDE9DF`               | Chart bars (rest day)                        |
-| `spActivityJournal`   | `#FFF3E0`<br />        | Journal breakdown bg (warm orange)           |
+| `spActivityJournal`   | `#FFF3E0`<br /> <br /> | Journal breakdown bg (warm orange)           |
 | `spActivityBreathing` | `#EAF7FD`               | Breathing breakdown bg (light blue)          |
 | `spActivityFocus`     | `#F3EEFF`               | Focus breakdown bg (light purple)            |
 | `spActivityColoring`  | `#FFF0F5`               | Coloring breakdown bg (light pink)           |
@@ -282,6 +282,59 @@ All steps: modal, `spBackground`, CloseButton top-right
 3. Text editor: white bg, 16pt radius, placeholder "Start writing here... there are no rules."
 4. Bottom: "0 words" counter | "Finish session" button (activates when text entered)
 
+### 9. Activity Completion State (Home Screen)
+
+**Figma node:** `143:1893` | **File:** `Features/Home/HomeView.swift`, `DesignSystem/Components/ActivityCard.swift`
+
+When an activity is completed, its card on the Home screen updates visually:
+
+- **Yellow border:** `spPrimary` at 0.78pt
+- **Yellow shadow:** `spPrimary` at 18% opacity (instead of black at 6%)
+- **Icon container bg:** changes from `spBackground` to `spPrimaryLight`
+- **Green checkmark:** `checkmark.circle.fill` in green appears next to the title
+- **XP pill:** bg changes from `spPrimaryLight` to solid `spPrimary`
+- **Play button:** chevron replaced with green checkmark, card disabled
+
+---
+
+### 10. App Loading
+
+**Figma node:** `143:1863` | **File:** `Features/Onboarding/AppLoadingView.swift`
+
+Splash/loading screen shown on app launch.
+
+---
+
+### 11. Register
+
+**Figma nodes:** `142:232` (form), `142:410` (agreement check) | **File:** `Features/Onboarding/RegisterView.swift`
+
+Registration form with agreement confirmation step.
+
+---
+
+### 12. MFA
+
+**Figma nodes:** `142:310` (code entry), `142:358` (completion) | **File:** `Features/Onboarding/MFAView.swift`
+
+Multi-factor authentication code entry and success confirmation.
+
+---
+
+### 13. Choose Character
+
+**Figma nodes:** `142:742`, `143:995`, `143:1248` (one per character color) | **File:** `Features/Onboarding/ChooseCharacterView.swift`
+
+Character selection grid with 4 character types (person, plant, bird, cat). Each shown in its signature color.
+
+---
+
+### 14. Customize Character
+
+**Figma node:** `143:1754` | **File:** `Features/Onboarding/CustomizeCharacterView.swift`
+
+Post-selection customization (color/variant options for the chosen character type).
+
 ---
 
 ## Implementation Order
@@ -302,17 +355,26 @@ All steps: modal, `spBackground`, CloseButton top-right
 
 7. Breathing exercise (animated circle, timer logic, cycle progression)
 8. Deep Focus (6-step flow: task input with file upload, plan review, sound check, timer with animated task progression, finish check, completion)
-9. Journal (prompt cycling, text editor, word count)
+9. Journal (prompt cycling, text editor, word count, auto-save to SwiftData)
 10. Coloring (canvas with touch regions, color palette, fill logic)
 
-### Phase 4: Data & Integration
+### Phase 4: Onboarding Flow
 
-11. Wire up domain repositories to screens
-12. Persist activity completion, mood entries, journal entries
-13. XP calculation and streak tracking
-14. Calendar integration (Schedule tab)
+11. App loading / splash screen
+12. Register screen (form fields + agreement check)
+13. MFA screen (code entry + completion)
+14. Choose character (character type selection grid)
+15. Customize character (variant/color picker for chosen type)
+16. Onboarding navigation coordinator (loading -> register -> MFA -> choose -> customize -> Home)
 
-#### Journey chart refactor (Phase 4 prerequisite)
+### Phase 5: Data & Integration
+
+17. Wire up domain repositories to screens
+18. Persist activity completion, mood entries, journal entries
+19. XP calculation and streak tracking
+20. Calendar integration (Schedule tab)
+
+#### Journey chart refactor (Phase 5 prerequisite)
 
 The Journey chart in `JourneyView.swift` currently uses hardcoded mock arrays where each bar carries its own pixel height and `Color` value. Before wiring backend data, refactor:
 
@@ -328,7 +390,7 @@ The Journey chart in `JourneyView.swift` currently uses hardcoded mock arrays wh
    }
    ```
 2. **Extend `ActivityRepository`** with `func journeySnapshot(for period: JourneyPeriod) async -> JourneySnapshot`.
-3. **Derive bar color + height in the view** from `activityCount` using a single rule (e.g., 0 → `spChartEmpty`, 1–2 → `spChartLight`, 3–4 → `spChartMedium`, 5+ → `spPrimary`; height = `activityCount / maxCount * chartMaxHeight`).
+3. **Derive bar color + height in the view** from `activityCount` using a single rule (e.g., 0 -> `spChartEmpty`, 1-2 -> `spChartLight`, 3-4 -> `spChartMedium`, 5+ -> `spPrimary`; height = `activityCount / maxCount * chartMaxHeight`).
 4. **Replace hardcoded `chartBars` / `currentStats` / `currentBreakdown`** with values derived from the fetched snapshot.
 
 This keeps the raw `activityCount` (backend truth) separate from presentation (color/height) so a new threshold rule or chart height can change without touching data.
