@@ -5,6 +5,10 @@ enum GrowthStage: String, Sendable {
     case sprouting
     case young
     case mature
+
+    var label: String {
+        rawValue.capitalized
+    }
 }
 
 struct GamificationStatus: Sendable {

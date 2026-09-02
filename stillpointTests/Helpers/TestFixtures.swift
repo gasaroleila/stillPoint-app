@@ -8,7 +8,7 @@ enum TestFixtures {
         level: Int = 1,
         totalActivities: Int = 5
     ) -> UserProfile {
-        UserProfile(id: UUID(), name: name, level: level, xp: xp, totalActivities: totalActivities)
+        UserProfile(id: UUID(), name: name, level: level, xp: xp, totalActivities: totalActivities, characterType: .person, growthStage: .newborn)
     }
 
     static func moodEntry(

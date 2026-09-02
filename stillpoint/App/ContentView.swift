@@ -21,7 +21,7 @@ struct ContentView: View {
             } else if hasCompletedOnboarding {
                 AuthContainerView(viewModel: AuthViewModel(auth: dependencies.auth))
             } else {
-                OnboardingFlowView(auth: dependencies.auth) {
+                OnboardingFlowView(dependencies: dependencies) {
                     // onComplete — auth state listener handles the transition
                 }
             }

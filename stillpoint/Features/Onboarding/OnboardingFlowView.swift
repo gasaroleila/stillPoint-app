@@ -9,7 +9,7 @@ enum OnboardingStep: String, Equatable {
 }
 
 struct OnboardingFlowView: View {
-    let auth: any AuthRepository
+    let dependencies: Dependencies
     let onComplete: () -> Void
 
     @Environment(\.modelContext) private var modelContext
@@ -28,7 +28,7 @@ struct OnboardingFlowView: View {
 
     private var vm: AuthViewModel {
         if let viewModel { return viewModel }
-        let created = AuthViewModel(auth: auth)
+        let created = AuthViewModel(auth: dependencies.auth)
         DispatchQueue.main.async { viewModel = created }
         return created
     }
@@ -62,6 +62,7 @@ struct OnboardingFlowView: View {
             case .customizeCharacter:
                 CustomizeCharacterView(
                     characterType: selectedCharacter,
+                    user: dependencies.user,
                     onComplete: {
                         progress.markComplete()
                         onComplete()

@@ -2,12 +2,15 @@ import SwiftUI
 
 struct CustomizeCharacterView: View {
     let characterType: CharacterType
+    let user: any UserRepository
     let onComplete: () -> Void
     let onBack: () -> Void
 
     @State private var selectedSkinTone: Int = 1
     @State private var selectedHat: String = "None"
     @State private var selectedAccessory: String = "None"
+    @State private var isSaving = false
+    @State private var errorMessage: String?
 
     private let skinTones: [Color] = [
         Color(hex: 0xFDDBB4),
@@ -226,22 +229,49 @@ struct CustomizeCharacterView: View {
     // MARK: - Start Button
 
     private var startButton: some View {
-        Button(action: onComplete) {
-            HStack(spacing: 8) {
-                Text("Start my journey")
-                    .font(.custom("Nunito-Black", size: 16))
-                Image(systemName: "arrow.right")
-                    .font(.system(size: 14, weight: .bold))
+        VStack(spacing: 8) {
+            if let error = errorMessage {
+                Text(error)
+                    .font(.spCaption)
+                    .foregroundStyle(.red)
             }
-            .foregroundStyle(Color.spTextPrimary)
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(Color.spPrimary)
-            .cornerRadius(20)
+            Button {
+                Task {
+                    isSaving = true
+                    errorMessage = nil
+                    do {
+                        try await user.saveCharacterSelection(
+                            type: characterType,
+                            skinTone: selectedSkinTone,
+                            hat: selectedHat,
+                            accessory: selectedAccessory
+                        )
+                        onComplete()
+                    } catch {
+                        errorMessage = error.localizedDescription
+                    }
+                    isSaving = false
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Text(isSaving ? "Saving..." : "Start my journey")
+                        .font(.custom("Nunito-Black", size: 16))
+                    if !isSaving {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                }
+                .foregroundStyle(Color.spTextPrimary)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(Color.spPrimary)
+                .cornerRadius(20)
+            }
+            .disabled(isSaving)
         }
     }
 }
 
 #Preview {
-    CustomizeCharacterView(characterType: .person, onComplete: {}, onBack: {})
+    CustomizeCharacterView(characterType: .person, user: UserRepositoryImpl(firestore: FirestoreService { nil }), onComplete: {}, onBack: {})
 }

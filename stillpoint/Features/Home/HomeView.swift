@@ -65,15 +65,18 @@ struct HomeView: View {
     private var header: some View {
         VStack(spacing: 8) {
             HStack {
-                Image("user-profile")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 51.3, height: 51.3)
-                    .clipShape(Circle())
-                    .padding(2.3)
-                    .background(
-                        Circle().stroke(Color.white.opacity(0.8), lineWidth: 2)
-                    )
+                ZStack {
+                    Circle()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(width: 51.3, height: 51.3)
+                    Image(systemName: vm.characterType.iconName)
+                        .font(.system(size: 24))
+                        .foregroundStyle(Color.white)
+                }
+                .padding(2.3)
+                .background(
+                    Circle().stroke(Color.white.opacity(0.8), lineWidth: 2)
+                )
 
                 Spacer()
 

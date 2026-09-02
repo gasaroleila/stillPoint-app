@@ -394,3 +394,13 @@ The Journey chart in `JourneyView.swift` currently uses hardcoded mock arrays wh
 4. **Replace hardcoded `chartBars` / `currentStats` / `currentBreakdown`** with values derived from the fetched snapshot.
 
 This keeps the raw `activityCount` (backend truth) separate from presentation (color/height) so a new threshold rule or chart height can change without touching data.
+
+---
+
+## TODO: Character Art Replacement
+
+Replace SF Symbol placeholders with actual character art for:
+- **Home header avatar** (`HomeView.swift`) — currently uses `characterType.iconName` SF Symbol
+- **Profile hero card** (`ProfileView.swift`) — currently uses `characterType.iconName` SF Symbol
+
+Each character type (person, plant, bird, cat) needs art for all 4 growth stages (newborn, sprouting, young, mature) so the character visually evolves as the user gains XP. Assets should go in `Assets.xcassets/Characters/`.

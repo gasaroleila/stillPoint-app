@@ -83,20 +83,22 @@ struct ProfileView: View {
 
                 VStack(spacing: 12) {
                     levelPill
-                    Image("sample-character")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .background(
-                            Circle()
-                                .fill(RadialGradient(
-                                    colors: [Color.white.opacity(0.45), Color.white.opacity(0)],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 60
-                                ))
-                                .frame(width: 140, height: 140)
-                        )
+                    ZStack {
+                        Circle()
+                            .fill(RadialGradient(
+                                colors: [Color.white.opacity(0.45), Color.white.opacity(0)],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 60
+                            ))
+                            .frame(width: 140, height: 140)
+                        Circle()
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: 90, height: 90)
+                        Image(systemName: vm.characterType.iconName)
+                            .font(.system(size: 44))
+                            .foregroundStyle(Color.white)
+                    }
                 }
                 .padding(.top, 24)
                 .padding(.bottom, 8)

@@ -6,6 +6,7 @@ final class HomeViewModel {
     var userName: String = ""
     var streakDays: Int = 0
     var totalXP: Int = 0
+    var characterType: CharacterType = .person
     var selectedMood: MoodType? = nil
     var moodConfirmed = false
     var completedActivities: Set<ActivityType> = []
@@ -55,6 +56,7 @@ final class HomeViewModel {
             let profile = try await user.getProfile()
             userName = profile.name
             totalXP = profile.xp
+            characterType = profile.characterType
 
             let streak = try await user.getStreak()
             streakDays = streak.currentDays

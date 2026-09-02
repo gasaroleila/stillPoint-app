@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import FirebaseFunctions
 
 struct UserRepositoryImpl: UserRepository {
     private let firestore: FirestoreService
@@ -14,12 +15,15 @@ struct UserRepositoryImpl: UserRepository {
         guard snapshot.exists, let data = snapshot.data() else {
             throw FirestoreServiceError.notAuthenticated
         }
+        let stageString = data["growthStage"] as? String
         return UserProfile(
             id: UUID(uuidString: doc.documentID) ?? UUID(),
             name: data["username"] as? String ?? "",
-            level: growthStageLevel(data["growthStage"] as? String),
+            level: growthStageLevel(stageString),
             xp: data["xp"] as? Int ?? 0,
-            totalActivities: data["totalActivities"] as? Int ?? 0
+            totalActivities: data["totalActivities"] as? Int ?? 0,
+            characterType: CharacterType(rawValue: data["characterType"] as? String ?? "") ?? .person,
+            growthStage: GrowthStage(rawValue: stageString ?? "") ?? .newborn
         )
     }
 
@@ -27,6 +31,17 @@ struct UserRepositoryImpl: UserRepository {
         let doc = try firestore.userDocument()
         try await doc.updateData([
             "username": name,
+            "updatedAt": FieldValue.serverTimestamp()
+        ])
+    }
+
+    func saveCharacterSelection(type: CharacterType, skinTone: Int, hat: String, accessory: String) async throws {
+        let doc = try firestore.userDocument()
+        try await doc.updateData([
+            "characterType": type.rawValue,
+            "characterSkinTone": skinTone,
+            "characterHat": hat,
+            "characterAccessory": accessory,
             "updatedAt": FieldValue.serverTimestamp()
         ])
     }
@@ -76,10 +91,26 @@ struct UserRepositoryImpl: UserRepository {
     func getReport(period: ReportPeriod) async throws -> Report {
         let periodKey = reportPeriodKey(period)
         let doc = try firestore.userCollection("reports").document(periodKey)
-        let snapshot = try await doc.getDocument()
+        var snapshot = try await doc.getDocument()
+
+        // No pre-computed report — ask the Cloud Function to generate it
+        if !snapshot.exists {
+            try await requestReportGeneration(period: period)
+            snapshot = try await doc.getDocument()
+        }
+
         guard snapshot.exists, let data = snapshot.data() else {
             return Report(period: period, activeDays: 0, restDays: 0, totalXP: 0, bestStreak: 0, activityBreakdown: [:], moodBreakdown: [:], dailyActivity: [])
         }
+        return parseReport(data: data, period: period)
+    }
+
+    private func requestReportGeneration(period: ReportPeriod) async throws {
+        let functions = Functions.functions()
+        _ = try await functions.httpsCallable("generateReport").call(["period": period.rawValue])
+    }
+
+    private func parseReport(data: [String: Any], period: ReportPeriod) -> Report {
         var breakdown: [ActivityType: Int] = [:]
         if let rawBreakdown = data["activityBreakdown"] as? [String: Int] {
             for (key, value) in rawBreakdown {

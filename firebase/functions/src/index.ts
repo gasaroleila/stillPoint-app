@@ -111,4 +111,4 @@ export const onMoodLogged = onDocumentCreated(
 
 // Re-export scheduled functions
 export { generateDailySuggestions } from "./suggestions";
-export { computeWeeklyReport, computeMonthlyReport } from "./reports";
+export { computeWeeklyReport, computeMonthlyReport, generateReport } from "./reports";

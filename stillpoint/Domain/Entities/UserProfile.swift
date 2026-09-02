@@ -6,4 +6,6 @@ struct UserProfile: Sendable {
     var level: Int
     var xp: Int
     var totalActivities: Int
+    var characterType: CharacterType
+    var growthStage: GrowthStage
 }

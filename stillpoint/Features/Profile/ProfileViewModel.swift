@@ -8,6 +8,8 @@ final class ProfileViewModel {
     var level: Int = 1
     var streakDays: Int = 0
     var totalActivities: Int = 0
+    var characterType: CharacterType = .person
+    var growthStage: GrowthStage = .newborn
     var earnedBadgeIds: Set<String> = []
     var errorMessage: String?
 
@@ -18,7 +20,7 @@ final class ProfileViewModel {
     }
 
     var levelDisplay: String {
-        "LVL \(level) \u{00B7} \(xp) XP"
+        "\(growthStage.label) \u{00B7} \(xp) XP"
     }
 
     func load() async {
@@ -28,6 +30,8 @@ final class ProfileViewModel {
             xp = profile.xp
             level = profile.level
             totalActivities = profile.totalActivities
+            characterType = profile.characterType
+            growthStage = profile.growthStage
 
             let streak = try await user.getStreak()
             streakDays = streak.currentDays
