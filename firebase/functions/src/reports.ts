@@ -39,22 +39,45 @@ async function computeReports(period: "week" | "month"): Promise<void> {
       .where("date", "<=", Timestamp.fromDate(end))
       .get();
 
-    // Calculate active days (days with at least one completion or mood)
-    const activeDaySet = new Set<string>();
+    // Count completions per day
+    const dailyCounts: Record<string, number> = {};
     for (const doc of completionsSnap.docs) {
       const date = doc.data().completedAt?.toDate?.();
-      if (date) activeDaySet.add(date.toISOString().slice(0, 10));
+      if (date) {
+        const key = date.toISOString().slice(0, 10);
+        dailyCounts[key] = (dailyCounts[key] ?? 0) + 1;
+      }
     }
+    // Also mark mood-only days as active (count 0 completions but still active)
     for (const doc of moodsSnap.docs) {
       const date = doc.data().date?.toDate?.();
-      if (date) activeDaySet.add(date.toISOString().slice(0, 10));
+      if (date) {
+        const key = date.toISOString().slice(0, 10);
+        if (!(key in dailyCounts)) dailyCounts[key] = 0;
+      }
     }
 
-    const totalDays = period === "week" ? 7 : daysInPreviousMonth(now);
-    const activeDays = activeDaySet.size;
+    // Build dailyActivity array covering every day in the period
+    const dailyActivity: { date: string; count: number }[] = [];
+    const cursor = new Date(start);
+    while (cursor <= end) {
+      const key = cursor.toISOString().slice(0, 10);
+      dailyActivity.push({ date: key, count: dailyCounts[key] ?? 0 });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    const totalDays = dailyActivity.length;
+    const activeDays = dailyActivity.filter((d) => d.count > 0).length;
     const restDays = totalDays - activeDays;
 
-    // Total XP from completions
+    // Count moods by type
+    const moodBreakdown: Record<string, number> = {};
+    for (const doc of moodsSnap.docs) {
+      const mood = doc.data().mood as string;
+      if (mood) moodBreakdown[mood] = (moodBreakdown[mood] ?? 0) + 1;
+    }
+
+    // Total XP and activity breakdown from completions
     let totalXP = 0;
     const activityBreakdown: Record<string, number> = {};
     for (const doc of completionsSnap.docs) {
@@ -74,6 +97,8 @@ async function computeReports(period: "week" | "month"): Promise<void> {
       totalXP,
       bestStreak,
       activityBreakdown,
+      moodBreakdown,
+      dailyActivity,
       computedAt: Timestamp.now(),
     });
   }

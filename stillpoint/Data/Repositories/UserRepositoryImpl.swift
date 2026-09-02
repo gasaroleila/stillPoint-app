@@ -78,7 +78,7 @@ struct UserRepositoryImpl: UserRepository {
         let doc = try firestore.userCollection("reports").document(periodKey)
         let snapshot = try await doc.getDocument()
         guard snapshot.exists, let data = snapshot.data() else {
-            return Report(period: period, activeDays: 0, restDays: 0, totalXP: 0, bestStreak: 0, activityBreakdown: [:])
+            return Report(period: period, activeDays: 0, restDays: 0, totalXP: 0, bestStreak: 0, activityBreakdown: [:], moodBreakdown: [:], dailyActivity: [])
         }
         var breakdown: [ActivityType: Int] = [:]
         if let rawBreakdown = data["activityBreakdown"] as? [String: Int] {
@@ -88,13 +88,31 @@ struct UserRepositoryImpl: UserRepository {
                 }
             }
         }
+        var daily: [DailyActivity] = []
+        if let rawDaily = data["dailyActivity"] as? [[String: Any]] {
+            daily = rawDaily.compactMap { item in
+                guard let date = item["date"] as? String,
+                      let count = item["count"] as? Int else { return nil }
+                return DailyActivity(date: date, count: count)
+            }
+        }
+        var moods: [MoodType: Int] = [:]
+        if let rawMoods = data["moodBreakdown"] as? [String: Int] {
+            for (key, value) in rawMoods {
+                if let mood = MoodType(rawValue: key) {
+                    moods[mood] = value
+                }
+            }
+        }
         return Report(
             period: period,
             activeDays: data["activeDays"] as? Int ?? 0,
             restDays: data["restDays"] as? Int ?? 0,
             totalXP: data["totalXP"] as? Int ?? 0,
             bestStreak: data["bestStreak"] as? Int ?? 0,
-            activityBreakdown: breakdown
+            activityBreakdown: breakdown,
+            moodBreakdown: moods,
+            dailyActivity: daily
         )
     }
 

@@ -23,6 +23,7 @@
 		2E38C7D999BD91F2A68CA707 /* BadgeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681D8E6BE129B0BEE084864C /* BadgeItem.swift */; };
 		31EE76A8807F4DACD573266A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CB9F95D188EA8C4257E71 /* HomeView.swift */; };
 		35E48E37803680CFC74F3EE9 /* ActivityCompletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE3722C2D84CA66E15C17DB /* ActivityCompletion.swift */; };
+		3B1D40F4D5FEC1DAAB6FE66E /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D5E3DFE183B40D1E42F86B /* JourneyViewModel.swift */; };
 		3C29FB6DEE905130C51E6D61 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38010B409F9D6788760163E7 /* AuthRepository.swift */; };
 		3F69A1C77A6458EAC5A9E731 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 168B30261892F1241D350238 /* FirebaseFunctions */; };
 		4453DE9E48BA041272D0B79A /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55508A6AB2F58FE21EAFF4AE /* OnboardingFlowView.swift */; };
@@ -157,6 +158,7 @@
 		C190D83D4926A610706E75B6 /* MoodRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRepositoryImpl.swift; sourceTree = "<group>"; };
 		C34AF8DC591E1B4850F8BE4B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C3FA5EE8C52D6F623CE48829 /* ActivityCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCard.swift; sourceTree = "<group>"; };
+		C5D5E3DFE183B40D1E42F86B /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		CD4A999A60D22F9B24F5EA7B /* UserRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepositoryImpl.swift; sourceTree = "<group>"; };
 		CE942CE8228973F672259FBC /* MoodRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodRepository.swift; sourceTree = "<group>"; };
 		CEC912069165F24FA7585E42 /* CustomizeCharacterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeCharacterView.swift; sourceTree = "<group>"; };
@@ -299,6 +301,7 @@
 			isa = PBXGroup;
 			children = (
 				D0C073DC7DC73EF137A3BFD1 /* JourneyView.swift */,
+				C5D5E3DFE183B40D1E42F86B /* JourneyViewModel.swift */,
 			);
 			path = Journey;
 			sourceTree = "<group>";
@@ -664,6 +667,7 @@
 				5EF76915F26B8639D9DF8E7C /* HomeViewModel.swift in Sources */,
 				78C2FC406E4D3A90B8EC1A7B /* JournalingView.swift in Sources */,
 				18113907FBC1B58ACF94AC08 /* JourneyView.swift in Sources */,
+				3B1D40F4D5FEC1DAAB6FE66E /* JourneyViewModel.swift in Sources */,
 				5E2B59C1F0C611C2F3B53EE1 /* LocalJournalEntry.swift in Sources */,
 				C3068AB8DC2302A6BA2FB642 /* LoginView.swift in Sources */,
 				DEECBA548934849784C30340 /* MFAView.swift in Sources */,

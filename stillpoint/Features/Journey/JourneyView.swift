@@ -18,10 +18,27 @@ enum JourneyPeriod: String, CaseIterable {
         case .year: return "This Year"
         }
     }
+
+    var reportPeriod: ReportPeriod {
+        switch self {
+        case .week: return .week
+        case .month: return .month
+        case .year: return .year
+        }
+    }
 }
 
 struct JourneyView: View {
+    @EnvironmentObject private var dependencies: Dependencies
+    @State private var viewModel: JourneyViewModel?
     @State private var period: JourneyPeriod = .week
+
+    private var vm: JourneyViewModel {
+        if let viewModel { return viewModel }
+        let created = JourneyViewModel(user: dependencies.user)
+        DispatchQueue.main.async { viewModel = created }
+        return created
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -36,7 +53,7 @@ struct JourneyView: View {
                 chartCard
                     .padding(.horizontal, SP.Padding.screenHorizontal)
 
-                StatsRow(items: currentStats)
+                StatsRow(items: vm.stats)
                     .padding(.horizontal, SP.Padding.screenHorizontal)
 
                 activityBreakdown
@@ -46,6 +63,10 @@ struct JourneyView: View {
             .padding(.top, 48)
         }
         .background(Color.spBackground)
+        .task { await vm.loadReport(for: period.reportPeriod) }
+        .onChange(of: period) { _, newPeriod in
+            Task { await vm.switchPeriod(to: newPeriod.reportPeriod) }
+        }
     }
 
     // MARK: - Header
@@ -73,17 +94,26 @@ struct JourneyView: View {
                         .font(.spSectionTitle)
                         .foregroundStyle(Color.spTextPrimary)
                     Spacer()
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(Color.spStatusText)
-                        Text("On track")
-                            .font(.custom("Nunito-Bold", size: 11.2))
-                            .foregroundStyle(Color.spStatusText)
+                    if let mood = vm.dominantMood, let text = vm.moodSummaryText {
+                        HStack(spacing: 5) {
+                            Image(mood.assetName)
+                                .renderingMode(.template)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 18, height: 18)
+                                .foregroundStyle(Color.spStatusText)
+                            Text(text)
+                                .font(.custom("Nunito-Bold", size: 12.8))
+                                .foregroundStyle(Color.spStatusText)
+                        }
                     }
                 }
 
-                barChart
+                if vm.chartBars.isEmpty {
+                    emptyChartState
+                } else {
+                    barChart
+                }
 
                 Divider().overlay(Color(hex: 0xF0EDE8))
 
@@ -95,11 +125,24 @@ struct JourneyView: View {
         }
     }
 
+    private var emptyChartState: some View {
+        VStack(spacing: 8) {
+            Text("No activity data yet")
+                .font(.spBody)
+                .foregroundStyle(Color.spTextSecondary)
+            Text("Complete activities to see your progress here")
+                .font(.spCaption)
+                .foregroundStyle(Color.spTextSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 140)
+    }
+
     private var barChart: some View {
         let showTrack = period == .week
         let spacing: CGFloat = period == .week ? SP.Spacing.chartBarGap : 3
         return HStack(alignment: .bottom, spacing: spacing) {
-            ForEach(Array(chartBars.enumerated()), id: \.offset) { _, bar in
+            ForEach(Array(vm.chartBars.enumerated()), id: \.offset) { _, bar in
                 VStack(spacing: 4) {
                     ZStack(alignment: .bottom) {
                         if showTrack {
@@ -110,7 +153,7 @@ struct JourneyView: View {
                             Color.clear.frame(height: 140)
                         }
                         Capsule()
-                            .fill(bar.color)
+                            .fill(bar.color.swiftUIColor)
                             .frame(height: bar.height)
                     }
                     .frame(maxWidth: .infinity)
@@ -140,7 +183,7 @@ struct JourneyView: View {
                 columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
                 spacing: 12
             ) {
-                ForEach(currentBreakdown, id: \.label) { item in
+                ForEach(vm.breakdown, id: \.label) { item in
                     breakdownCell(item)
                 }
             }
@@ -168,123 +211,36 @@ struct JourneyView: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(item.background)
+        .background(item.bg.color)
         .cornerRadius(16)
     }
+}
 
-    // MARK: - Mock data
+// MARK: - Color mappings
 
-    private var chartBars: [ChartBar] {
-        switch period {
-        case .week:
-            return [
-                ChartBar(day: "M", color: .spChartMedium, height: 80),
-                ChartBar(day: "T", color: .spChartLight, height: 40),
-                ChartBar(day: "W", color: .spPrimary, height: 120),
-                ChartBar(day: "T", color: .spChartMedium, height: 80),
-                ChartBar(day: "F", color: .spChartEmpty, height: 4),
-                ChartBar(day: "S", color: .spPrimary, height: 120),
-                ChartBar(day: "S", color: .spChartMedium, height: 80),
-            ]
-
-        case .month:
-            // 30 bars, labels shown at day 1, 6, 11, 16, 21, 26
-            let heights: [(CGFloat, Color)] = [
-                (40, .spChartLight), (110, .spPrimary), (30, .spChartLight), (70, .spChartMedium), (35, .spChartLight),
-                (110, .spPrimary), (30, .spChartLight), (60, .spChartMedium), (55, .spChartMedium), (65, .spChartMedium),
-                (100, .spPrimary), (55, .spChartMedium), (110, .spPrimary), (35, .spChartLight), (55, .spChartMedium),
-                (60, .spChartMedium), (30, .spChartLight), (105, .spPrimary), (55, .spChartMedium), (60, .spChartMedium),
-                (95, .spPrimary), (55, .spChartMedium), (35, .spChartLight), (60, .spChartMedium), (55, .spChartMedium),
-                (125, .spPrimary), (55, .spChartMedium), (30, .spChartLight), (35, .spChartLight), (55, .spChartMedium),
-            ]
-            return heights.enumerated().map { i, entry in
-                let day = i + 1
-                let label = [1, 6, 11, 16, 21, 26].contains(day) ? "\(day)" : ""
-                return ChartBar(day: label, color: entry.1, height: entry.0)
-            }
-
-        case .year:
-            let months: [(String, CGFloat, Color)] = [
-                ("J", 45, .spChartLight),
-                ("F", 55, .spChartLight),
-                ("M", 55, .spChartLight),
-                ("A", 75, .spChartMedium),
-                ("M", 75, .spChartMedium),
-                ("J", 85, .spChartMedium),
-                ("J", 85, .spChartMedium),
-                ("A", 110, .spPrimary),
-                ("S", 85, .spChartMedium),
-                ("O", 125, .spPrimary),
-                ("N", 80, .spChartMedium),
-                ("D", 85, .spChartMedium),
-            ]
-            return months.map { ChartBar(day: $0.0, color: $0.2, height: $0.1) }
-        }
-    }
-
-    private var currentStats: [StatItem] {
-        switch period {
-        case .week:
-            return [
-                StatItem(iconSystemName: "chart.line.uptrend.xyaxis", value: "2.1/day", label: "AVG"),
-                StatItem(iconSystemName: "flame.fill", value: "7 days", label: "Best Streak"),
-                StatItem(iconSystemName: "bolt.fill", value: "388 XP", label: "Total XP"),
-            ]
-        case .month:
-            return [
-                StatItem(iconSystemName: "chart.line.uptrend.xyaxis", value: "1.7/day", label: "AVG"),
-                StatItem(iconSystemName: "flame.fill", value: "7 days", label: "Best Streak"),
-                StatItem(iconSystemName: "bolt.fill", value: "1,560 XP", label: "Total XP"),
-            ]
-        case .year:
-            return [
-                StatItem(iconSystemName: "chart.line.uptrend.xyaxis", value: "1.5/day", label: "AVG"),
-                StatItem(iconSystemName: "flame.fill", value: "14 days", label: "Best Streak"),
-                StatItem(iconSystemName: "bolt.fill", value: "11,320 XP", label: "Total XP"),
-            ]
-        }
-    }
-
-    private var currentBreakdown: [BreakdownItem] {
-        switch period {
-        case .week:
-            return [
-                BreakdownItem(iconAsset: "journal", count: "3x", label: "Journal", background: .spActivityJournal),
-                BreakdownItem(iconAsset: "breathing", count: "5x", label: "Breathing", background: .spActivityBreathing),
-                BreakdownItem(iconAsset: "focus", count: "3x", label: "Focus", background: .spActivityFocus),
-                BreakdownItem(iconAsset: "coloring", count: "4x", label: "Coloring", background: .spActivityColoring),
-            ]
-        case .month:
-            return [
-                BreakdownItem(iconAsset: "journal", count: "10x", label: "Journal", background: .spActivityJournal),
-                BreakdownItem(iconAsset: "breathing", count: "18x", label: "Breathing", background: .spActivityBreathing),
-                BreakdownItem(iconAsset: "focus", count: "12x", label: "Focus", background: .spActivityFocus),
-                BreakdownItem(iconAsset: "coloring", count: "8x", label: "Coloring", background: .spActivityColoring),
-            ]
-        case .year:
-            return [
-                BreakdownItem(iconAsset: "journal", count: "43x", label: "Journal", background: .spActivityJournal),
-                BreakdownItem(iconAsset: "breathing", count: "72x", label: "Breathing", background: .spActivityBreathing),
-                BreakdownItem(iconAsset: "focus", count: "56x", label: "Focus", background: .spActivityFocus),
-                BreakdownItem(iconAsset: "coloring", count: "67x", label: "Coloring", background: .spActivityColoring),
-            ]
+extension ChartBarColor {
+    var swiftUIColor: Color {
+        switch self {
+        case .empty: return .spChartEmpty
+        case .light: return .spChartLight
+        case .medium: return .spChartMedium
+        case .full: return .spPrimary
         }
     }
 }
 
-private struct ChartBar {
-    let day: String
-    let color: Color
-    let height: CGFloat
-}
-
-private struct BreakdownItem {
-    let iconAsset: String
-    let count: String
-    let label: String
-    let background: Color
+extension BreakdownBg {
+    var color: Color {
+        switch self {
+        case .journal: return .spActivityJournal
+        case .breathing: return .spActivityBreathing
+        case .focus: return .spActivityFocus
+        case .coloring: return .spActivityColoring
+        }
+    }
 }
 
 #Preview {
     JourneyView()
+        .environmentObject(Dependencies())
 }
