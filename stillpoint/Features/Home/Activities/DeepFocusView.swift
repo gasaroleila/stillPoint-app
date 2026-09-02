@@ -2,6 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct DeepFocusView: View {
+    let activities: any ActivityRepository
     let onComplete: (Int) -> Void
     let onDismiss: () -> Void
 
@@ -12,22 +13,17 @@ struct DeepFocusView: View {
     @State private var attachedFiles: [AttachedFile] = []
     @State private var showFilePicker = false
 
+    // Task plan from backend
+    @State private var taskPlan: [FocusTask] = []
+    @State private var isAnalyzing = false
+    @State private var analyzeError: String?
+
     // Step 4 — Timer state
     @State private var totalSeconds = 20 * 60
     @State private var remainingSeconds = 20 * 60
     @State private var isPaused = false
     @State private var timer: Timer?
     @State private var currentTaskIndex = 0
-
-    // Mock task plan returned by "backend"
-    private var taskPlan: [FocusTask] {
-        [
-            FocusTask(title: "Break down the problem", minutes: 4),
-            FocusTask(title: "Research and gather info", minutes: 5),
-            FocusTask(title: "Draft initial approach", minutes: 6),
-            FocusTask(title: "Review and refine", minutes: 5),
-        ]
-    }
 
     var body: some View {
         switch step {
@@ -117,11 +113,11 @@ struct DeepFocusView: View {
 
                 Spacer()
 
-                PrimaryCTA(title: "Analyze my task", trailingSystemImage: "arrow.right") {
-                    withAnimation { step = .planReview }
+                PrimaryCTA(title: isAnalyzing ? "Analyzing..." : "Analyze my task", trailingSystemImage: isAnalyzing ? nil : "arrow.right") {
+                    Task { await analyzeTask() }
                 }
-                .opacity(taskDescription.isEmpty ? 0.5 : 1)
-                .disabled(taskDescription.isEmpty)
+                .opacity(taskDescription.isEmpty || isAnalyzing ? 0.5 : 1)
+                .disabled(taskDescription.isEmpty || isAnalyzing)
                 .padding(.bottom, 40)
             }
             .padding(.horizontal, SP.Padding.screenHorizontal)
@@ -461,6 +457,36 @@ struct DeepFocusView: View {
         .background(Color.spBackgroundAlt)
     }
 
+    // MARK: - Task analysis
+
+    private func analyzeTask() async {
+        isAnalyzing = true
+        analyzeError = nil
+        do {
+            print("[DeepFocus] Calling analyzeTask with:", taskDescription)
+            let steps = try await activities.analyzeTask(description: taskDescription)
+            print("[DeepFocus] Got \(steps.count) steps from backend")
+            taskPlan = steps.map { FocusTask(title: $0.title, minutes: $0.minutes) }
+            if taskPlan.isEmpty {
+                taskPlan = Self.fallbackPlan
+            }
+            withAnimation { step = .planReview }
+        } catch {
+            print("[DeepFocus] analyzeTask failed:", error)
+            analyzeError = error.localizedDescription
+            taskPlan = Self.fallbackPlan
+            withAnimation { step = .planReview }
+        }
+        isAnalyzing = false
+    }
+
+    private static let fallbackPlan: [FocusTask] = [
+        FocusTask(title: "Understand the problem", minutes: 4),
+        FocusTask(title: "Research and plan", minutes: 5),
+        FocusTask(title: "Execute", minutes: 7),
+        FocusTask(title: "Review", minutes: 4),
+    ]
+
     // MARK: - Timer helpers
 
     private var progress: CGFloat {
@@ -600,5 +626,5 @@ private struct FlowLayout: Layout {
 }
 
 #Preview {
-    DeepFocusView(onComplete: { _ in }, onDismiss: {})
+    DeepFocusView(activities: Dependencies().activities, onComplete: { _ in }, onDismiss: {})
 }

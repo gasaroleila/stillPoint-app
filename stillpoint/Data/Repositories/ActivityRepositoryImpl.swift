@@ -1,5 +1,6 @@
 import Foundation
 import FirebaseFirestore
+import FirebaseFunctions
 
 struct ActivityRepositoryImpl: ActivityRepository {
     private let firestore: FirestoreService
@@ -87,6 +88,18 @@ struct ActivityRepositoryImpl: ActivityRepository {
         }
 
         try await doc.updateData(["activities": activities])
+    }
+
+    func analyzeTask(description: String) async throws -> [TaskStep] {
+        let functions = Functions.functions()
+        let result = try await functions.httpsCallable("analyzeTask").call(["description": description])
+        guard let data = result.data as? [String: Any],
+              let steps = data["steps"] as? [[String: Any]] else { return [] }
+        return steps.compactMap { step in
+            guard let title = step["title"] as? String,
+                  let minutes = step["minutes"] as? Int else { return nil }
+            return TaskStep(title: title, minutes: minutes)
+        }
     }
 
     private func parseCompletion(_ doc: QueryDocumentSnapshot) -> ActivityCompletion? {

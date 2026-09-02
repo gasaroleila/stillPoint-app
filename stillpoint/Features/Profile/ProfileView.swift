@@ -17,7 +17,7 @@ struct ProfileView: View {
                 pageHeader
                 heroCard
                 overviewCard
-                badgesCard(title: "Monthly Badges", items: monthlyBadges)
+                badgesCard(title: "Milestones & Habits", items: milestoneBadges)
                 badgesCard(title: "Activity Awards", items: activityAwards)
                 logoutButton
                     .padding(.horizontal, SP.Padding.screenHorizontal)
@@ -247,13 +247,13 @@ struct ProfileView: View {
 
     // MARK: - Badge definitions
 
-    private var monthlyBadges: [ProfileBadge] {
+    private var milestoneBadges: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "streak-freak", label: "7-Day Streak", badgeName: "Week Warrior"),
-            ProfileBadge(iconAsset: "breath-master", label: "Breath Master", badgeName: "Breath Master"),
-            ProfileBadge(iconAsset: "coloring-master", label: "First Color", badgeName: "Color Artist"),
-            ProfileBadge(iconAsset: "deep-thinker", label: "Deep Thinker", badgeName: "Monthly Master"),
-            ProfileBadge(iconAsset: "mood-tracking", label: "Mood Tracker", badgeName: "First Steps"),
+            ProfileBadge(iconAsset: "mood-tracking", label: "First Steps", badgeName: "First Steps"),
+            ProfileBadge(iconAsset: "streak-freak", label: "In Rhythm", badgeName: "In Rhythm"),
+            ProfileBadge(iconAsset: "weekly-consistency", label: "Second Nature", badgeName: "Second Nature"),
+            ProfileBadge(iconAsset: "daily-xp-completion", label: "Taking Root", badgeName: "Taking Root"),
+            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "Deep Roots", badgeName: "Deep Roots"),
         ].map { badge in
             ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
         }
@@ -261,11 +261,11 @@ struct ProfileView: View {
 
     private var activityAwards: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "focus-completion", label: "First Focus", badgeName: "Focus Champion"),
-            ProfileBadge(iconAsset: "breath-completion", label: "Calm Breath", badgeName: "Breath Master"),
-            ProfileBadge(iconAsset: "daily-xp-completion", label: "Goal Getter", badgeName: "Rising Star"),
-            ProfileBadge(iconAsset: "weekly-consistency", label: "Week Warrior", badgeName: "Week Warrior"),
-            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "XP Hunter", badgeName: "XP Hunter"),
+            ProfileBadge(iconAsset: "breath-master", label: "Centering", badgeName: "Centering"),
+            ProfileBadge(iconAsset: "focus-completion", label: "Clear Mind", badgeName: "Clear Mind"),
+            ProfileBadge(iconAsset: "deep-thinker", label: "Quiet Pages", badgeName: "Quiet Pages"),
+            ProfileBadge(iconAsset: "coloring-master", label: "Creative Flow", badgeName: "Creative Flow"),
+            ProfileBadge(iconAsset: "breath-completion", label: "Full Spectrum", badgeName: "Full Spectrum"),
         ].map { badge in
             ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
         }

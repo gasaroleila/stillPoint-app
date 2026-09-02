@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var showDeepFocus = false
     @State private var showColoring = false
     @State private var showJournaling = false
+    @State private var showCelebration = false
 
     private var vm: HomeViewModel {
         if let viewModel { return viewModel }
@@ -38,6 +39,7 @@ struct HomeView: View {
         }
         .fullScreenCover(isPresented: $showDeepFocus) {
             DeepFocusView(
+                activities: dependencies.activities,
                 onComplete: { _ in handleCompletion(type: .focus, duration: 1200) },
                 onDismiss: { showDeepFocus = false }
             )
@@ -54,10 +56,32 @@ struct HomeView: View {
                 onDismiss: { showJournaling = false }
             )
         }
+        .fullScreenCover(isPresented: $showCelebration) {
+            if let celebration = vm.celebration {
+                CelebrationView(type: celebration) {
+                    vm.celebration = nil
+                    showCelebration = false
+                }
+            }
+        }
+        .onChange(of: showBreathingExercise) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showDeepFocus) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showColoring) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showJournaling) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
     }
 
     private func handleCompletion(type: ActivityType, duration: Int) {
-        Task { await vm.logActivityCompletion(type: type, durationSeconds: duration) }
+        Task {
+            await vm.logActivityCompletion(type: type, durationSeconds: duration)
+        }
     }
 
     // MARK: - Header
@@ -251,6 +275,14 @@ struct HomeView: View {
         .padding(.bottom, 32)
         .frame(maxWidth: .infinity)
         .background(Color.spBackground)
+    }
+
+    private func showCelebrationIfNeeded() {
+        if vm.celebration != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                showCelebration = true
+            }
+        }
     }
 
     private func handleActivityTap(_ type: ActivityType) {

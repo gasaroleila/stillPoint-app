@@ -413,3 +413,14 @@ Injected via `.environmentObject()` in `stillpointApp.swift`. ViewModels receive
 - `stillpoint/Features/Profile/ProfileView.swift` -- add ViewModel
 - `stillpoint/Features/Schedule/ScheduleView.swift` -- add ViewModel
 - `stillpoint/Features/Journey/JourneyView.swift` -- add ViewModel
+
+## TODO: Replace Gemini with Claude for Task Breakdown
+
+The `analyzeTask` Cloud Function (`firebase/functions/src/taskBreakdown.ts`) uses Gemini 2.0 Flash as a temporary free alternative. Once Anthropic API credits are available, swap to Claude:
+
+- **Model:** `claude-sonnet-5`
+- **Secret:** Replace `GEMINI_API_KEY` with `ANTHROPIC_API_KEY` via `firebase functions:secrets:set`
+- **API endpoint:** `https://api.anthropic.com/v1/messages`
+- **Headers:** `x-api-key`, `anthropic-version: 2023-06-01`
+- **Request body:** `{ model, max_tokens, messages: [{ role: "user", content }] }`
+- **Response parsing:** `result.content[0].text` (strip markdown fences before JSON.parse)
