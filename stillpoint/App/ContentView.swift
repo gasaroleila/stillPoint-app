@@ -1,10 +1,16 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @EnvironmentObject private var dependencies: Dependencies
+    @Environment(\.modelContext) private var modelContext
+    @Query private var progressRecords: [OnboardingProgress]
     @State private var selectedTab: SPTab = .home
     @State private var isLoading = true
-    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
+    private var hasCompletedOnboarding: Bool {
+        progressRecords.first?.isComplete ?? false
+    }
 
     var body: some View {
         Group {
@@ -16,14 +22,31 @@ struct ContentView: View {
                 AuthContainerView(viewModel: AuthViewModel(auth: dependencies.auth))
             } else {
                 OnboardingFlowView(auth: dependencies.auth) {
-                    hasCompletedOnboarding = true
+                    // onComplete — auth state listener handles the transition
                 }
             }
         }
         .animation(.easeInOut(duration: 0.3), value: isLoading)
         .animation(.easeInOut(duration: 0.3), value: dependencies.isAuthenticated)
+        .onChange(of: dependencies.isAuthenticated) { _, authenticated in
+            if authenticated { selectedTab = .home }
+        }
         .task {
             try? await Task.sleep(for: .seconds(3.5))
+            // If user has a Firebase account but no local onboarding record, backfill it
+            if dependencies.auth.currentUserId != nil && progressRecords.isEmpty {
+                let progress = OnboardingProgress()
+                progress.markComplete()
+                modelContext.insert(progress)
+            }
+            print("[ContentView] Firebase userId: \(dependencies.auth.currentUserId ?? "nil")")
+            print("[ContentView] isAuthenticated: \(dependencies.isAuthenticated)")
+            print("[ContentView] progressRecords count: \(progressRecords.count)")
+            if let record = progressRecords.first {
+                print("[ContentView] step: \(record.step), isComplete: \(record.isComplete)")
+            } else {
+                print("[ContentView] No OnboardingProgress record found")
+            }
             withAnimation { isLoading = false }
         }
     }
@@ -54,6 +77,7 @@ struct ContentView: View {
                     Label(SPTab.profile.label, systemImage: SPTab.profile.systemImage)
                 }
         }
+        .tint(Color.spPrimary)
     }
 }
 

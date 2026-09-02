@@ -1,16 +1,11 @@
 import SwiftUI
 
 struct MFAView: View {
+    @Bindable var viewModel: AuthViewModel
     let onVerify: () -> Void
     let onBack: () -> Void
 
-    @State private var digits: [String] = Array(repeating: "", count: 6)
-    @State private var errorMessage: String?
-    @State private var isLoading = false
     @FocusState private var focusedIndex: Int?
-
-    private var code: String { digits.joined() }
-    private var isComplete: Bool { digits.allSatisfy { !$0.isEmpty } }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -39,7 +34,7 @@ struct MFAView: View {
                     resendRow
                         .frame(maxWidth: .infinity)
 
-                    if let error = errorMessage {
+                    if let error = viewModel.errorMessage {
                         Text(error)
                             .font(.spCaption)
                             .foregroundStyle(.red)
@@ -102,9 +97,9 @@ struct MFAView: View {
     }
 
     private func digitBox(index: Int) -> some View {
-        let isFilled = !digits[index].isEmpty
+        let isFilled = !viewModel.mfaDigits[index].isEmpty
 
-        return TextField("", text: $digits[index])
+        return TextField("", text: $viewModel.mfaDigits[index])
             .keyboardType(.numberPad)
             .multilineTextAlignment(.center)
             .font(.custom("Nunito-Black", size: 20))
@@ -120,12 +115,10 @@ struct MFAView: View {
                     )
             )
             .focused($focusedIndex, equals: index)
-            .onChange(of: digits[index]) { oldValue, newValue in
-                // Only keep last digit
+            .onChange(of: viewModel.mfaDigits[index]) { oldValue, newValue in
                 if newValue.count > 1 {
-                    digits[index] = String(newValue.last!)
+                    viewModel.mfaDigits[index] = String(newValue.last!)
                 }
-                // Auto-advance to next field
                 if !newValue.isEmpty && index < 5 {
                     focusedIndex = index + 1
                 }
@@ -140,12 +133,13 @@ struct MFAView: View {
                 .font(.custom("Nunito-Regular", size: 12))
                 .foregroundStyle(Color.spTextSecondary)
             Button {
-                // TODO: resend code
+                Task { await viewModel.resendMFACode() }
             } label: {
                 Text("Resend code")
                     .font(.custom("Nunito-Bold", size: 12))
                     .foregroundStyle(Color.spTextPrimary)
             }
+            .disabled(viewModel.isLoading)
         }
     }
 
@@ -153,26 +147,25 @@ struct MFAView: View {
 
     private var verifyButton: some View {
         Button {
-            // TODO: verify code with backend
-            isLoading = true
-            // For now, just advance if 6 digits entered
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isLoading = false
-                onVerify()
+            Task {
+                await viewModel.verifyMFA()
+                if viewModel.errorMessage == nil {
+                    onVerify()
+                }
             }
         } label: {
-            Text(isLoading ? "Verifying..." : "Verify")
+            Text(viewModel.isLoading ? "Verifying..." : "Verify")
                 .font(.custom("Nunito-Black", size: 16))
-                .foregroundStyle(isComplete ? Color.spTextPrimary : Color(hex: 0xB0ADA6))
+                .foregroundStyle(viewModel.isMFACodeComplete ? Color.spTextPrimary : Color(hex: 0xB0ADA6))
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(isComplete ? Color.spPrimary : Color(hex: 0xF0EDE8))
+                .background(viewModel.isMFACodeComplete ? Color.spPrimary : Color(hex: 0xF0EDE8))
                 .cornerRadius(20)
         }
-        .disabled(!isComplete || isLoading)
+        .disabled(!viewModel.isMFACodeComplete || viewModel.isLoading)
     }
 }
 
 #Preview {
-    MFAView(onVerify: {}, onBack: {})
+    MFAView(viewModel: AuthViewModel(auth: AuthRepositoryImpl()), onVerify: {}, onBack: {})
 }

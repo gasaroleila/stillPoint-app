@@ -88,14 +88,17 @@ final class AuthRepositoryTests: XCTestCase {
         XCTAssertEqual(sut.currentUserId, "new-user")
     }
 
-    // MARK: - MFA Stubs
+    // MARK: - MFA
 
-    func test_verifyMFA_doesNotThrow() async throws {
-        try await sut.verifyMFA(code: "123456")
+    func test_setupMFA_returnsVerificationID() async throws {
+        await mockAuthService.setMFAVerificationID("test-vid")
+        let vid = try await sut.setupMFA(phoneNumber: "+15551234567")
+        XCTAssertEqual(vid, "test-vid")
     }
 
-    func test_setupMFA_doesNotThrow() async throws {
-        try await sut.setupMFA(phoneNumber: "+15551234567")
+    func test_verifyMFA_doesNotThrow() async throws {
+        await mockAuthService.setMFAVerificationID("test-vid")
+        try await sut.verifyMFA(code: "123456", verificationID: "test-vid")
     }
 
     // MARK: - Login

@@ -1,6 +1,7 @@
 import SwiftUI
+import SwiftData
 
-enum OnboardingStep: Equatable {
+enum OnboardingStep: String, Equatable {
     case register
     case mfa
     case chooseCharacter
@@ -11,9 +12,19 @@ struct OnboardingFlowView: View {
     let auth: any AuthRepository
     let onComplete: () -> Void
 
-    @State private var step: OnboardingStep = .register
+    @Environment(\.modelContext) private var modelContext
+    @Query private var progressRecords: [OnboardingProgress]
+
+    @State private var step: OnboardingStep?
     @State private var selectedCharacter: CharacterType = .person
     @State private var viewModel: AuthViewModel?
+
+    private var progress: OnboardingProgress {
+        if let existing = progressRecords.first { return existing }
+        let new = OnboardingProgress()
+        modelContext.insert(new)
+        return new
+    }
 
     private var vm: AuthViewModel {
         if let viewModel { return viewModel }
@@ -27,37 +38,50 @@ struct OnboardingFlowView: View {
             switch step {
             case .register:
                 RegisterView(viewModel: vm, onContinue: {
-                    withAnimation { step = .mfa }
+                    Task {
+                        await vm.startMFAEnrollment()
+                        if vm.errorMessage == nil {
+                            goTo(.mfa)
+                        }
+                    }
                 })
             case .mfa:
                 MFAView(
-                    onVerify: {
-                        withAnimation { step = .chooseCharacter }
-                    },
-                    onBack: {
-                        withAnimation { step = .register }
-                    }
+                    viewModel: vm,
+                    onVerify: { goTo(.chooseCharacter) },
+                    onBack: { goTo(.register) }
                 )
             case .chooseCharacter:
                 ChooseCharacterView(
                     onContinue: { character in
                         selectedCharacter = character
-                        withAnimation { step = .customizeCharacter }
+                        goTo(.customizeCharacter)
                     },
-                    onBack: {
-                        withAnimation { step = .mfa }
-                    }
+                    onBack: { goTo(.mfa) }
                 )
             case .customizeCharacter:
                 CustomizeCharacterView(
                     characterType: selectedCharacter,
-                    onComplete: onComplete,
-                    onBack: {
-                        withAnimation { step = .chooseCharacter }
-                    }
+                    onComplete: {
+                        progress.markComplete()
+                        onComplete()
+                    },
+                    onBack: { goTo(.chooseCharacter) }
                 )
+            case .none:
+                Color.spBackground
             }
         }
         .animation(.easeInOut(duration: 0.3), value: step)
+        .onAppear {
+            if step == nil {
+                step = progress.currentStep
+            }
+        }
+    }
+
+    private func goTo(_ newStep: OnboardingStep) {
+        progress.update(to: newStep)
+        withAnimation { step = newStep }
     }
 }

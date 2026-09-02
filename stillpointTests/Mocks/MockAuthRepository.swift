@@ -10,11 +10,15 @@ final class MockAuthRepository: AuthRepository, @unchecked Sendable {
     var registerError: Error? = nil
     var logoutError: Error? = nil
     var resetError: Error? = nil
+    var mfaVerificationID = "mock-verification-id"
+    var mfaError: Error? = nil
 
     private(set) var registerCalls: [(username: String, email: String, password: String)] = []
     private(set) var loginCalls: [(email: String, password: String)] = []
     private(set) var logoutCallCount = 0
     private(set) var resetCalls: [String] = []
+    private(set) var setupMFACalls: [String] = []
+    private(set) var verifyMFACalls: [(code: String, verificationID: String)] = []
 
     func startListening(onChange: @escaping @Sendable (Bool) -> Void) {
         onChange(isAuthenticated)
@@ -31,9 +35,31 @@ final class MockAuthRepository: AuthRepository, @unchecked Sendable {
         return loginResult
     }
 
-    func verifyMFA(code: String) async throws {}
+    func setupMFA(phoneNumber: String) async throws -> String {
+        setupMFACalls.append(phoneNumber)
+        if let error = mfaError { throw error }
+        return mfaVerificationID
+    }
 
-    func setupMFA(phoneNumber: String) async throws {}
+    func resendMFACode(phoneNumber: String) async throws -> String {
+        if let error = mfaError { throw error }
+        return mfaVerificationID
+    }
+
+    func verifyMFA(code: String, verificationID: String) async throws {
+        verifyMFACalls.append((code, verificationID))
+        if let error = mfaError { throw error }
+    }
+
+    func sendMFALoginChallenge() async throws -> String {
+        if let error = mfaError { throw error }
+        return mfaVerificationID
+    }
+
+    func completeMFALoginChallenge(code: String, verificationID: String) async throws {
+        verifyMFACalls.append((code, verificationID))
+        if let error = mfaError { throw error }
+    }
 
     func requestPasswordReset(email: String) async throws {
         resetCalls.append(email)

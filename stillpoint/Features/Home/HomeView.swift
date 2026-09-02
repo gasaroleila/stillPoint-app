@@ -156,6 +156,7 @@ struct HomeView: View {
             withAnimation(.easeInOut(duration: 0.2)) {
                 vm.selectedMood = mood
             }
+            Task { await vm.confirmMood() }
         } label: {
             VStack(spacing: 7) {
                 Image(mood.assetName)
@@ -217,16 +218,18 @@ struct HomeView: View {
                     Text("Today's Activities")
                         .font(.spHeading)
                         .foregroundStyle(Color.spTextPrimary)
-                    Text("Complete all four to keep your streak alive")
+                    Text(vm.suggestions.isEmpty
+                         ? "Complete activities to keep your streak alive"
+                         : "3 suggested activities for today")
                         .font(.spBodyRegular)
                         .foregroundStyle(Color.spTextSecondary)
                 }
                 Spacer()
-                XPBadge(earned: vm.earnedXP, total: 195)
+                XPBadge(earned: vm.earnedXP, total: vm.maxDailyXP)
             }
             .padding(.bottom, 4)
 
-            ForEach(homeActivities, id: \.type) { activity in
+            ForEach(vm.displayedActivities, id: \.type) { activity in
                 ActivityCard(
                     iconAsset: activity.iconAsset,
                     title: activity.title,
@@ -262,51 +265,6 @@ struct HomeView: View {
         }
     }
 
-    private var homeActivities: [HomeActivity] {
-        [
-            HomeActivity(
-                type: .breathing,
-                iconAsset: "breathing",
-                title: "Box Breathing",
-                description: "Calm your nervous system with a guided breathing pattern",
-                durationText: "~2 min",
-                xpText: "+30 XP"
-            ),
-            HomeActivity(
-                type: .focus,
-                iconAsset: "focus",
-                title: "Deep Focus",
-                description: "20 minutes of undivided attention to what matters most",
-                durationText: "20 min",
-                xpText: "+60 XP"
-            ),
-            HomeActivity(
-                type: .coloring,
-                iconAsset: "coloring",
-                title: "Coloring",
-                description: "Color a cute mushroom garden — relax and be creative",
-                durationText: "5 min",
-                xpText: "+25 XP"
-            ),
-            HomeActivity(
-                type: .journaling,
-                iconAsset: "journal",
-                title: "Journal",
-                description: "Reflect on your day and clear your mind with free writing",
-                durationText: "30 min",
-                xpText: "+80 XP"
-            ),
-        ]
-    }
-}
-
-private struct HomeActivity {
-    let type: ActivityType
-    let iconAsset: String
-    let title: String
-    let description: String
-    let durationText: String
-    let xpText: String
 }
 
 #Preview {

@@ -39,9 +39,9 @@ struct DeepFocusView: View {
         case .complete:
             ActivityCompleteView(
                 activityName: "Deep Focus",
-                xpEarned: 60,
+                xpEarned: 50,
                 onDone: {
-                    onComplete(60)
+                    onComplete(50)
                     onDismiss()
                 }
             )

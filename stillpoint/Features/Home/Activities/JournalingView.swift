@@ -11,7 +11,7 @@ struct JournalingView: View {
     @State private var isComplete = false
     @State private var saveTask: Task<Void, Never>?
 
-    private let xpReward = 80
+    private let xpReward = 25
     private let minWords = 50
 
     private var wordCount: Int {

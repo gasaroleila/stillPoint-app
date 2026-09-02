@@ -75,6 +75,7 @@
 		CD219F2A539ED988E93A5EFB /* AppLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 839DB368263B2498B6D47FBB /* AppLoadingView.swift */; };
 		D057BC9A39AEDA2EF2C31D2A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 3F9472D036C2EEDC9D974875 /* FirebaseFirestore */; };
 		D08699B2326A8F864BE0CA7E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303A1BDDFF848BDA08B6B117 /* ContentView.swift */; };
+		D0A4912EA7279A448E227EEE /* OnboardingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC0417E3D218BC3C6D30D7 /* OnboardingProgress.swift */; };
 		D486866B12E394517D235476 /* XPBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD8B41DE63BF8CDC2F81417E /* XPBadge.swift */; };
 		D5561640664CAF7741197AA2 /* DeepFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96743A4A9416FB42BE939477 /* DeepFocusView.swift */; };
 		DA0CC4C97E4A50F1C528C24E /* AuthIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA8B6712053AD7B681AAE1E /* AuthIntegrationTests.swift */; };
@@ -121,6 +122,7 @@
 		493CB5462DCC9F9ABBC9DCC8 /* SegmentedControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControl.swift; sourceTree = "<group>"; };
 		541BEB226C245E58F06836C0 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
 		55508A6AB2F58FE21EAFF4AE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		5CBC0417E3D218BC3C6D30D7 /* OnboardingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProgress.swift; sourceTree = "<group>"; };
 		618D6278B5CEA2DA998B1638 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		681D8E6BE129B0BEE084864C /* BadgeItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeItem.swift; sourceTree = "<group>"; };
 		6866E05F87E746CF5B6FB45A /* PrimaryCTA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryCTA.swift; sourceTree = "<group>"; };
@@ -471,6 +473,7 @@
 			isa = PBXGroup;
 			children = (
 				DE34A9062BE5AD0CEC22777D /* LocalJournalEntry.swift */,
+				5CBC0417E3D218BC3C6D30D7 /* OnboardingProgress.swift */,
 			);
 			path = Local;
 			sourceTree = "<group>";
@@ -668,6 +671,7 @@
 				BB28F1E0AF57A3291CBF4EFA /* MoodRepository.swift in Sources */,
 				2962E4B9087ACA10E8658675 /* MoodRepositoryImpl.swift in Sources */,
 				4453DE9E48BA041272D0B79A /* OnboardingFlowView.swift in Sources */,
+				D0A4912EA7279A448E227EEE /* OnboardingProgress.swift in Sources */,
 				8BD8D94319F7324D7CC34868 /* PillTag.swift in Sources */,
 				BFA32D52DBEC9C8BB3764C9A /* PrimaryCTA.swift in Sources */,
 				F10F656F5079442277A80FCB /* ProfileView.swift in Sources */,

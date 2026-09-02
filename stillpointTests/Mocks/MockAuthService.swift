@@ -7,8 +7,11 @@ actor MockAuthService: AuthServiceProtocol {
 
     var registerResult: Result<String, Error> = .success("mock-uid-123")
     var loginError: Error? = nil
+    var loginReturnsMFA = false
     var logoutError: Error? = nil
     var resetError: Error? = nil
+    var mfaVerificationID = "mock-verification-id"
+    var mfaError: Error? = nil
 
     private(set) var registerCalls: [(email: String, password: String)] = []
     private(set) var loginCalls: [(email: String, password: String)] = []
@@ -36,9 +39,10 @@ actor MockAuthService: AuthServiceProtocol {
         return try registerResult.get()
     }
 
-    func login(email: String, password: String) async throws {
+    func login(email: String, password: String) async throws -> Bool {
         loginCalls.append((email, password))
         if let error = loginError { throw error }
+        return loginReturnsMFA
     }
 
     func logout() async throws {
@@ -49,6 +53,24 @@ actor MockAuthService: AuthServiceProtocol {
     func requestPasswordReset(email: String) async throws {
         resetCalls.append(email)
         if let error = resetError { throw error }
+    }
+
+    func startMFAEnrollment(phoneNumber: String) async throws -> String {
+        if let error = mfaError { throw error }
+        return mfaVerificationID
+    }
+
+    func completeMFAEnrollment(verificationID: String, code: String) async throws {
+        if let error = mfaError { throw error }
+    }
+
+    func sendMFALoginChallenge() async throws -> String {
+        if let error = mfaError { throw error }
+        return mfaVerificationID
+    }
+
+    func completeMFALoginChallenge(verificationID: String, code: String) async throws {
+        if let error = mfaError { throw error }
     }
 
     // MARK: - Test configuration
@@ -72,5 +94,13 @@ actor MockAuthService: AuthServiceProtocol {
 
     func setResetError(_ error: Error?) {
         resetError = error
+    }
+
+    func setMFAVerificationID(_ id: String) {
+        mfaVerificationID = id
+    }
+
+    func setMFAError(_ error: Error?) {
+        mfaError = error
     }
 }

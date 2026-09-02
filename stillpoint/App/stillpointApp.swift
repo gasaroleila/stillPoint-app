@@ -17,6 +17,6 @@ struct stillpointApp: App {
             ContentView()
                 .environmentObject(dependencies)
         }
-        .modelContainer(for: [LocalJournalEntry.self])
+        .modelContainer(for: [LocalJournalEntry.self, OnboardingProgress.self])
     }
 }
