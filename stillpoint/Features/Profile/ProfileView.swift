@@ -113,13 +113,17 @@ struct ProfileView: View {
             }
             .frame(height: 200)
 
-            VStack(spacing: 2) {
-                Text(vm.userName)
-                    .font(.custom("Nunito-Black", size: 19.2))
-                    .foregroundStyle(Color.spTextPrimary)
-                Text("@\(vm.userName.lowercased()) · Joined June 2026")
-                    .font(.custom("Nunito-SemiBold", size: 11.5))
-                    .foregroundStyle(Color.spTextSecondary)
+            VStack(spacing: 8) {
+                VStack(spacing: 2) {
+                    Text(vm.userName)
+                        .font(.custom("Nunito-Black", size: 19.2))
+                        .foregroundStyle(Color.spTextPrimary)
+                    Text("@\(vm.userName.lowercased()) · Joined June 2026")
+                        .font(.custom("Nunito-SemiBold", size: 11.5))
+                        .foregroundStyle(Color.spTextSecondary)
+                }
+
+                xpProgressBar
             }
             .padding(.bottom, 16)
             .frame(maxWidth: .infinity)
@@ -140,6 +144,35 @@ struct ProfileView: View {
             .padding(.vertical, 4)
             .background(Color.spOverlay)
             .cornerRadius(SP.Radius.pill)
+    }
+
+    private var xpProgressBar: some View {
+        VStack(spacing: 4) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.spBackgroundAlt)
+                        .frame(height: 8)
+                    Capsule()
+                        .fill(Color.spPrimary)
+                        .frame(width: geo.size.width * vm.xpProgress, height: 8)
+                }
+            }
+            .frame(height: 8)
+
+            HStack {
+                Text(vm.xpProgressText)
+                    .font(.custom("Nunito-SemiBold", size: 10))
+                    .foregroundStyle(Color.spTextSecondary)
+                Spacer()
+                if let next = vm.growthStage.next {
+                    Text(next.label)
+                        .font(.custom("Nunito-Bold", size: 10))
+                        .foregroundStyle(Color.spStatusText)
+                }
+            }
+        }
+        .padding(.horizontal, 24)
     }
 
     // MARK: - Overview

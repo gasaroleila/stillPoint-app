@@ -41,6 +41,10 @@ final class JourneyViewModel {
     var chartBars: [ChartBar] {
         guard let report, !report.dailyActivity.isEmpty else { return [] }
 
+        if report.period == .year {
+            return yearlyChartBars(from: report.dailyActivity)
+        }
+
         let maxCount = report.dailyActivity.map(\.count).max() ?? 1
         let effectiveMax = max(maxCount, 1)
 
@@ -50,6 +54,29 @@ final class JourneyViewModel {
             let height: CGFloat = day.count == 0
                 ? 4
                 : CGFloat(day.count) / CGFloat(effectiveMax) * 136
+            return ChartBar(day: label, color: color, height: height)
+        }
+    }
+
+    private func yearlyChartBars(from daily: [DailyActivity]) -> [ChartBar] {
+        let calendar = Calendar.current
+        var monthlyTotals: [Int: Int] = [:]
+
+        for day in daily {
+            guard let date = Self.dateFormatter.date(from: day.date) else { continue }
+            let month = calendar.component(.month, from: date)
+            monthlyTotals[month, default: 0] += day.count
+        }
+
+        let maxCount = max(monthlyTotals.values.max() ?? 1, 1)
+
+        return (1...12).map { month in
+            let count = monthlyTotals[month] ?? 0
+            let label = calendar.veryShortMonthSymbols[month - 1]
+            let color = barColor(count: count)
+            let height: CGFloat = count == 0
+                ? 4
+                : CGFloat(count) / CGFloat(maxCount) * 136
             return ChartBar(day: label, color: color, height: height)
         }
     }

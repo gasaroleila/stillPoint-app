@@ -23,6 +23,17 @@ final class ProfileViewModel {
         "\(growthStage.label) \u{00B7} \(xp) XP"
     }
 
+    var xpProgress: Double {
+        growthStage.progress(xp: xp)
+    }
+
+    var xpProgressText: String {
+        if let next = growthStage.nextStageThreshold {
+            return "\(xp) / \(next) XP"
+        }
+        return "\(xp) XP — Max stage reached"
+    }
+
     func load() async {
         do {
             let profile = try await user.getProfile()

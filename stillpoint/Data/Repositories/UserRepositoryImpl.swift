@@ -90,13 +90,18 @@ struct UserRepositoryImpl: UserRepository {
 
     func getReport(period: ReportPeriod) async throws -> Report {
         let periodKey = reportPeriodKey(period)
-        let doc = try firestore.userCollection("reports").document(periodKey)
+        let reportsCollection = try firestore.userCollection("reports")
+        let doc = reportsCollection.document(periodKey)
         var snapshot = try await doc.getDocument()
 
         // No pre-computed report — ask the Cloud Function to generate it
         if !snapshot.exists {
-            try await requestReportGeneration(period: period)
-            snapshot = try await doc.getDocument()
+            let serverKey = try await requestReportGeneration(period: period)
+            // Use the server's period key in case it differs from the client's
+            let resolvedDoc = serverKey != periodKey
+                ? reportsCollection.document(serverKey)
+                : doc
+            snapshot = try await resolvedDoc.getDocument()
         }
 
         guard snapshot.exists, let data = snapshot.data() else {
@@ -105,9 +110,12 @@ struct UserRepositoryImpl: UserRepository {
         return parseReport(data: data, period: period)
     }
 
-    private func requestReportGeneration(period: ReportPeriod) async throws {
+    @discardableResult
+    private func requestReportGeneration(period: ReportPeriod) async throws -> String {
         let functions = Functions.functions()
-        _ = try await functions.httpsCallable("generateReport").call(["period": period.rawValue])
+        let result = try await functions.httpsCallable("generateReport").call(["period": period.rawValue])
+        let data = result.data as? [String: Any]
+        return data?["periodKey"] as? String ?? reportPeriodKey(period)
     }
 
     private func parseReport(data: [String: Any], period: ReportPeriod) -> Report {
