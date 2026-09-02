@@ -185,7 +185,7 @@ struct ProfileView: View {
             ) {
                 overviewCell(icon: "flame.fill", value: "\(vm.streakDays)", label: "Day Streak")
                 overviewCell(icon: "bolt.fill", value: "\(vm.xp)", label: "Total XP")
-                overviewCell(icon: "trophy.fill", value: "Gold", label: "League")
+                overviewCell(icon: "leaf.fill", value: "\(vm.stagesAttained) / 4", label: "Growth Stages")
                 overviewCell(icon: "star.fill", value: "\(vm.totalActivities)", label: "Activities")
             }
         }
