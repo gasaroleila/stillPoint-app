@@ -1,17 +1,45 @@
-Wellness suggestions working
+# Stillpoint
 
-Pull history — for each activity type (Box Breathing, Journal, Coloring, Deep Focus), find the last date the user completed it.
-Rank by recency — activities not done in the longest time get priority for today's suggestions.
-Fit to calendar slots — cross-reference that ranked list against available free slots (from the FreeBusy computation) — e.g., Deep Focus only gets suggested if there's a 20+ min gap available.
- - OAuth connect → get calendar ID(s)
- - Query freeBusy for the next day/week
- - Invert busy blocks against a reasonable daily window to get free slots
- - Match slot durations to activity durations (Deep Focus needs a 20+ min slot, Box Breathing fits in any gap)
-Pick 3 — take the top-ranked, slot-compatible activities. If someone did Journal and Coloring yesterday but not Box Breathing or Deep Focus in 3 days, those two get bumped to the top today.
-Compare to yesterday — after picking today's 3, check overlap with yesterday's 3. If at least 1 differs, the diversity bonus (+25 XP) triggers when completed.
+A mindfulness and mental wellness iOS app that helps users build consistent self-care habits through guided activities, smart scheduling, and gentle gamification.
 
-## Frontend Plan - NEXT
+## Features
 
-### App Flow
+- **Guided Activities** — Box Breathing, Deep Focus, Journaling, and Coloring exercises
+- **Smart Scheduling** — Reads your calendar to find free slots and suggests activities that fit
+- **Gamification** — XP system, growth stages, streak tracking, and celebration animations
+- **Journey Tracking** — Weekly reports with mood summaries stored in Firestore
+- **Character System** — Choose and grow a companion character that evolves with your progress
 
-## Backend Plan
+## Tech Stack
+
+- **Platform:** iOS 17+, SwiftUI
+- **Language:** Swift 6.1
+- **Backend:** Firebase (Auth, Firestore, Cloud Functions)
+- **Build:** XcodeGen (`project.yml`)
+- **Dependencies:** None (pure Apple frameworks)
+
+## Architecture
+
+Clean Architecture with three layers:
+
+```
+stillpoint/
+├── App/              # Entry point, root navigation
+├── Domain/
+│   ├── Entities/     # Activity, Mood, UserProfile, Streak, Badge
+│   └── Protocols/    # Repository interfaces
+├── Data/
+│   ├── Repositories/ # Firestore-backed implementations
+│   └── Local/        # CalendarService, SwiftData models
+├── Features/         # Auth, Home, Journey, Schedule, Profile, Onboarding
+├── DesignSystem/     # Tokens (colors, typography, spacing), reusable components
+└── Resources/        # Assets, fonts (Nunito family), Info.plist
+```
+
+## Getting Started
+
+1. Clone the repo
+2. Run `xcodegen generate` to create the Xcode project
+3. Open `stillpoint.xcodeproj`
+4. Add your `GoogleService-Info.plist` for Firebase
+5. Build and run on a simulator or device (iOS 17+)
