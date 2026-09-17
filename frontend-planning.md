@@ -367,6 +367,10 @@ Post-selection customization (color/variant options for the chosen character typ
 15. Customize character (variant/color picker for chosen type)
 16. Onboarding navigation coordinator (loading -> register -> MFA -> choose -> customize -> Home)
 
+### Known Limitations
+
+**MFA enrollment is skipped during onboarding.** Firebase Phone Auth MFA requires APNs configuration (Apple Developer Program) for device verification. Until APNs is set up, the onboarding flow catches the MFA enrollment error and lets the user continue without phone verification. The MFA code (AuthService, AuthViewModel, MFAView) is fully wired — once APNs is configured, remove the skip-on-error logic in `OnboardingFlowView` so enrollment is enforced.
+
 ### Phase 5: Data & Integration
 
 17. Wire up domain repositories to screens

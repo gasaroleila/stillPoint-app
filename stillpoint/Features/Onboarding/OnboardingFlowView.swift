@@ -42,6 +42,11 @@ struct OnboardingFlowView: View {
                         await vm.startMFAEnrollment()
                         if vm.errorMessage == nil {
                             goTo(.mfa)
+                        } else {
+                            // MFA enrollment unavailable (no APNs) — skip to character selection
+                            print("[Onboarding] MFA skipped: \(vm.errorMessage ?? "")")
+                            vm.errorMessage = nil
+                            goTo(.chooseCharacter)
                         }
                     }
                 })

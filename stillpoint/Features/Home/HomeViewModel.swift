@@ -39,6 +39,7 @@ final class HomeViewModel {
         displayedActivities.reduce(0) { $0 + (Self.xpPerActivity[$1.type] ?? 0) }
     }
 
+    var celebration: CelebrationType?
     var errorMessage: String?
 
     private let moods: any MoodRepository
@@ -121,10 +122,33 @@ final class HomeViewModel {
         }
     }
 
+    private static let streakMilestones: Set<Int> = [7, 14, 30, 60, 180, 365]
+
     func logActivityCompletion(type: ActivityType, durationSeconds: Int) async {
+        let previousXP = totalXP
+        let previousStage = GrowthStage.from(xp: previousXP)
+
         do {
             try await activities.logCompletion(activityType: type, duration: durationSeconds)
             completedActivities.insert(type)
+
+            // Re-fetch profile and streak to detect milestones
+            let profile = try await user.getProfile()
+            totalXP = profile.xp
+            let streak = try await user.getStreak()
+            streakDays = streak.currentDays
+
+            // Check for level-up
+            let newStage = GrowthStage.from(xp: totalXP)
+            if newStage != previousStage {
+                celebration = .levelUp(stage: newStage)
+                return
+            }
+
+            // Check for streak milestone
+            if Self.streakMilestones.contains(streakDays) {
+                celebration = .streakMilestone(days: streakDays)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

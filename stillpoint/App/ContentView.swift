@@ -29,25 +29,31 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.3), value: isLoading)
         .animation(.easeInOut(duration: 0.3), value: dependencies.isAuthenticated)
         .onChange(of: dependencies.isAuthenticated) { _, authenticated in
-            if authenticated { selectedTab = .home }
+            if authenticated {
+                selectedTab = .home
+            }
+            ensureOnboardingComplete()
         }
         .task {
+            // Wait for Firebase auth state to settle before showing UI
             try? await Task.sleep(for: .seconds(3.5))
-            // If user has a Firebase account but no local onboarding record, backfill it
-            if dependencies.auth.currentUserId != nil && progressRecords.isEmpty {
+            ensureOnboardingComplete()
+            print("[ContentView] Firebase userId: \(dependencies.auth.currentUserId ?? "nil")")
+            print("[ContentView] isAuthenticated: \(dependencies.isAuthenticated)")
+            print("[ContentView] hasCompletedOnboarding: \(hasCompletedOnboarding)")
+            withAnimation { isLoading = false }
+        }
+    }
+
+    private func ensureOnboardingComplete() {
+        if dependencies.auth.currentUserId != nil && !hasCompletedOnboarding {
+            if let existing = progressRecords.first {
+                existing.markComplete()
+            } else {
                 let progress = OnboardingProgress()
                 progress.markComplete()
                 modelContext.insert(progress)
             }
-            print("[ContentView] Firebase userId: \(dependencies.auth.currentUserId ?? "nil")")
-            print("[ContentView] isAuthenticated: \(dependencies.isAuthenticated)")
-            print("[ContentView] progressRecords count: \(progressRecords.count)")
-            if let record = progressRecords.first {
-                print("[ContentView] step: \(record.step), isComplete: \(record.isComplete)")
-            } else {
-                print("[ContentView] No OnboardingProgress record found")
-            }
-            withAnimation { isLoading = false }
         }
     }
 

@@ -37,6 +37,15 @@ enum GrowthStage: String, Sendable {
         }
     }
 
+    static func from(xp: Int) -> GrowthStage {
+        switch xp {
+        case 8001...: return .mature
+        case 1501...: return .young
+        case 201...: return .sprouting
+        default: return .newborn
+        }
+    }
+
     /// Returns 0.0–1.0 progress toward the next stage. 1.0 if mature.
     func progress(xp: Int) -> Double {
         guard let nextThreshold = nextStageThreshold else { return 1.0 }
