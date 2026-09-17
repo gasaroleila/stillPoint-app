@@ -19,9 +19,9 @@ struct BreathingExerciseView: View {
         if isComplete {
             ActivityCompleteView(
                 activityName: "Breathing Exercise",
-                xpEarned: 30,
+                xpEarned: 20,
                 onDone: {
-                    onComplete(30)
+                    onComplete(20)
                     onDismiss()
                 }
             )

@@ -1,4 +1,3 @@
-
 # Stillpoint Backend Plan
 
 **Created: July 15, 2026, 7:46 PM EDT**
@@ -116,6 +115,7 @@ stillPoint-app/                         (repo root)
 ```
 
 **Separation boundaries:**
+
 - `stillpoint/` is compiled by Xcode. It contains only Swift. XcodeGen (`project.yml`) points here for sources.
 - `firebase/` is managed by the Firebase CLI. It contains only TypeScript/Node.js. Deployed via `firebase deploy`.
 - They never import from each other. The only shared contract is the Firestore document schema (documented in this file).
@@ -413,3 +413,32 @@ Injected via `.environmentObject()` in `stillpointApp.swift`. ViewModels receive
 - `stillpoint/Features/Profile/ProfileView.swift` -- add ViewModel
 - `stillpoint/Features/Schedule/ScheduleView.swift` -- add ViewModel
 - `stillpoint/Features/Journey/JourneyView.swift` -- add ViewModel
+
+## TODO: Fix Task Breakdown API (`analyzeTask`)
+
+**Current status:** Not working. Both API providers have billing issues.
+
+**Current error (Gemini):**
+```json
+{
+  "error": {
+    "code": 429,
+    "message": "Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing.",
+    "status": "RESOURCE_EXHAUSTED"
+  }
+}
+```
+
+**Next steps:**
+1. Add credits at https://ai.studio/projects for Gemini, OR
+2. Add credits at https://console.anthropic.com for Claude API
+
+**Current setup:** Gemini 3.5 Flash via `GEMINI_API_KEY` secret in `firebase/functions/src/taskBreakdown.ts`
+
+**To swap to Claude once funded:**
+- **Model:** `claude-sonnet-5`
+- **Secret:** Replace `GEMINI_API_KEY` with `ANTHROPIC_API_KEY` via `firebase functions:secrets:set`
+- **API endpoint:** `https://api.anthropic.com/v1/messages`
+- **Headers:** `x-api-key`, `anthropic-version: 2023-06-01`
+- **Request body:** `{ model, max_tokens, messages: [{ role: "user", content }] }`
+- **Response parsing:** `result.content[0].text` (strip markdown fences before JSON.parse)

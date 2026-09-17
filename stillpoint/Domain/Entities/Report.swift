@@ -6,6 +6,11 @@ enum ReportPeriod: String, Sendable {
     case year
 }
 
+struct DailyActivity: Sendable {
+    let date: String
+    let count: Int
+}
+
 struct Report: Sendable {
     let period: ReportPeriod
     let activeDays: Int
@@ -13,4 +18,6 @@ struct Report: Sendable {
     let totalXP: Int
     let bestStreak: Int
     let activityBreakdown: [ActivityType: Int]
+    let moodBreakdown: [MoodType: Int]
+    let dailyActivity: [DailyActivity]
 }

@@ -2,11 +2,16 @@ import Foundation
 import FirebaseFirestore
 
 final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
-    private let authService = AuthService()
-    private let db = Firestore.firestore()
+    private let authService: any AuthServiceProtocol
+    private let db: Firestore
 
     private(set) var isAuthenticated = false
     private(set) var currentUserId: String?
+
+    init(authService: any AuthServiceProtocol = AuthService(), db: Firestore = Firestore.firestore()) {
+        self.authService = authService
+        self.db = db
+    }
 
     func startListening(onChange: @escaping @Sendable (Bool) -> Void) {
         Task {
@@ -43,16 +48,32 @@ final class AuthRepositoryImpl: AuthRepository, @unchecked Sendable {
     }
 
     func login(email: String, password: String) async throws -> AuthResult {
-        try await authService.login(email: email, password: password)
-        return .authenticated
+        let requiresMFA = try await authService.login(email: email, password: password)
+        return requiresMFA ? .requiresMFA : .authenticated
     }
 
-    func verifyMFA(code: String) async throws {
-        // MFA implementation deferred to Phase 6
+    // MARK: - MFA Enrollment
+
+    func setupMFA(phoneNumber: String) async throws -> String {
+        try await authService.startMFAEnrollment(phoneNumber: phoneNumber)
     }
 
-    func setupMFA(phoneNumber: String) async throws {
-        // MFA implementation deferred to Phase 6
+    func resendMFACode(phoneNumber: String) async throws -> String {
+        try await authService.startMFAEnrollment(phoneNumber: phoneNumber)
+    }
+
+    func verifyMFA(code: String, verificationID: String) async throws {
+        try await authService.completeMFAEnrollment(verificationID: verificationID, code: code)
+    }
+
+    // MARK: - MFA Login Challenge
+
+    func sendMFALoginChallenge() async throws -> String {
+        try await authService.sendMFALoginChallenge()
+    }
+
+    func completeMFALoginChallenge(code: String, verificationID: String) async throws {
+        try await authService.completeMFALoginChallenge(verificationID: verificationID, code: code)
     }
 
     func requestPasswordReset(email: String) async throws {

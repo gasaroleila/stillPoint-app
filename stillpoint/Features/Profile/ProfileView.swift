@@ -2,6 +2,14 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var dependencies: Dependencies
+    @State private var viewModel: ProfileViewModel?
+
+    private var vm: ProfileViewModel {
+        if let viewModel { return viewModel }
+        let created = ProfileViewModel(user: dependencies.user)
+        DispatchQueue.main.async { viewModel = created }
+        return created
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -9,7 +17,7 @@ struct ProfileView: View {
                 pageHeader
                 heroCard
                 overviewCard
-                badgesCard(title: "Monthly Badges", items: monthlyBadges)
+                badgesCard(title: "Milestones & Habits", items: milestoneBadges)
                 badgesCard(title: "Activity Awards", items: activityAwards)
                 logoutButton
                     .padding(.horizontal, SP.Padding.screenHorizontal)
@@ -18,6 +26,7 @@ struct ProfileView: View {
             .padding(.top, 48)
         }
         .background(Color.spBackground)
+        .onAppear { Task { await vm.load() } }
     }
 
     private var logoutButton: some View {
@@ -74,20 +83,22 @@ struct ProfileView: View {
 
                 VStack(spacing: 12) {
                     levelPill
-                    Image("sample-character")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .background(
-                            Circle()
-                                .fill(RadialGradient(
-                                    colors: [Color.white.opacity(0.45), Color.white.opacity(0)],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 60
-                                ))
-                                .frame(width: 140, height: 140)
-                        )
+                    ZStack {
+                        Circle()
+                            .fill(RadialGradient(
+                                colors: [Color.white.opacity(0.45), Color.white.opacity(0)],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 60
+                            ))
+                            .frame(width: 140, height: 140)
+                        Circle()
+                            .fill(Color.white.opacity(0.2))
+                            .frame(width: 90, height: 90)
+                        Image(systemName: vm.characterType.iconName)
+                            .font(.system(size: 44))
+                            .foregroundStyle(Color.white)
+                    }
                 }
                 .padding(.top, 24)
                 .padding(.bottom, 8)
@@ -102,13 +113,17 @@ struct ProfileView: View {
             }
             .frame(height: 200)
 
-            VStack(spacing: 2) {
-                Text("Anne")
-                    .font(.custom("Nunito-Black", size: 19.2))
-                    .foregroundStyle(Color.spTextPrimary)
-                Text("@anne · Joined June 2026")
-                    .font(.custom("Nunito-SemiBold", size: 11.5))
-                    .foregroundStyle(Color.spTextSecondary)
+            VStack(spacing: 8) {
+                VStack(spacing: 2) {
+                    Text(vm.userName)
+                        .font(.custom("Nunito-Black", size: 19.2))
+                        .foregroundStyle(Color.spTextPrimary)
+                    Text("@\(vm.userName.lowercased()) · Joined June 2026")
+                        .font(.custom("Nunito-SemiBold", size: 11.5))
+                        .foregroundStyle(Color.spTextSecondary)
+                }
+
+                xpProgressBar
             }
             .padding(.bottom, 16)
             .frame(maxWidth: .infinity)
@@ -121,7 +136,7 @@ struct ProfileView: View {
     }
 
     private var levelPill: some View {
-        Text("LVL 4 · 308 XP")
+        Text(vm.levelDisplay)
             .font(.custom("Nunito-ExtraBold", size: 10.4))
             .tracking(0.832)
             .foregroundStyle(Color.white)
@@ -129,6 +144,35 @@ struct ProfileView: View {
             .padding(.vertical, 4)
             .background(Color.spOverlay)
             .cornerRadius(SP.Radius.pill)
+    }
+
+    private var xpProgressBar: some View {
+        VStack(spacing: 4) {
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.spBackgroundAlt)
+                        .frame(height: 8)
+                    Capsule()
+                        .fill(Color.spPrimary)
+                        .frame(width: geo.size.width * vm.xpProgress, height: 8)
+                }
+            }
+            .frame(height: 8)
+
+            HStack {
+                Text(vm.xpProgressText)
+                    .font(.custom("Nunito-SemiBold", size: 10))
+                    .foregroundStyle(Color.spTextSecondary)
+                Spacer()
+                if let next = vm.growthStage.next {
+                    Text(next.label)
+                        .font(.custom("Nunito-Bold", size: 10))
+                        .foregroundStyle(Color.spStatusText)
+                }
+            }
+        }
+        .padding(.horizontal, 24)
     }
 
     // MARK: - Overview
@@ -139,10 +183,10 @@ struct ProfileView: View {
                 columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
                 spacing: 12
             ) {
-                overviewCell(icon: "flame.fill", value: "7", label: "Day Streak")
-                overviewCell(icon: "bolt.fill", value: "308", label: "Total XP")
-                overviewCell(icon: "trophy.fill", value: "Gold", label: "League")
-                overviewCell(icon: "star.fill", value: "21", label: "Activities")
+                overviewCell(icon: "flame.fill", value: "\(vm.streakDays)", label: "Day Streak")
+                overviewCell(icon: "bolt.fill", value: "\(vm.xp)", label: "Total XP")
+                overviewCell(icon: "leaf.fill", value: "\(vm.stagesAttained) / 4", label: "Growth Stages")
+                overviewCell(icon: "star.fill", value: "\(vm.totalActivities)", label: "Activities")
             }
         }
         .padding(.horizontal, SP.Padding.screenHorizontal)
@@ -201,26 +245,30 @@ struct ProfileView: View {
         .padding(.horizontal, SP.Padding.screenHorizontal)
     }
 
-    // MARK: - Mock data
+    // MARK: - Badge definitions
 
-    private var monthlyBadges: [ProfileBadge] {
+    private var milestoneBadges: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "streak-freak", label: "7-Day Streak", isEarned: true),
-            ProfileBadge(iconAsset: "breath-master", label: "Breath Master", isEarned: true),
-            ProfileBadge(iconAsset: "coloring-master", label: "First Color", isEarned: true),
-            ProfileBadge(iconAsset: "deep-thinker", label: "Deep Thinker", isEarned: false),
-            ProfileBadge(iconAsset: "mood-tracking", label: "Mood Tracker", isEarned: false),
-        ]
+            ProfileBadge(iconAsset: "mood-tracking", label: "First Steps", badgeName: "First Steps"),
+            ProfileBadge(iconAsset: "streak-freak", label: "In Rhythm", badgeName: "In Rhythm"),
+            ProfileBadge(iconAsset: "weekly-consistency", label: "Second Nature", badgeName: "Second Nature"),
+            ProfileBadge(iconAsset: "daily-xp-completion", label: "Taking Root", badgeName: "Taking Root"),
+            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "Deep Roots", badgeName: "Deep Roots"),
+        ].map { badge in
+            ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
+        }
     }
 
     private var activityAwards: [ProfileBadge] {
         [
-            ProfileBadge(iconAsset: "focus-completion", label: "First Focus", isEarned: true),
-            ProfileBadge(iconAsset: "breath-completion", label: "Calm Breath", isEarned: true),
-            ProfileBadge(iconAsset: "daily-xp-completion", label: "Goal Getter", isEarned: true),
-            ProfileBadge(iconAsset: "weekly-consistency", label: "Week Warrior", isEarned: false),
-            ProfileBadge(iconAsset: "longterm-xp-consistency", label: "XP Hunter", isEarned: false),
-        ]
+            ProfileBadge(iconAsset: "breath-master", label: "Centering", badgeName: "Centering"),
+            ProfileBadge(iconAsset: "focus-completion", label: "Clear Mind", badgeName: "Clear Mind"),
+            ProfileBadge(iconAsset: "deep-thinker", label: "Quiet Pages", badgeName: "Quiet Pages"),
+            ProfileBadge(iconAsset: "coloring-master", label: "Creative Flow", badgeName: "Creative Flow"),
+            ProfileBadge(iconAsset: "breath-completion", label: "Full Spectrum", badgeName: "Full Spectrum"),
+        ].map { badge in
+            ProfileBadge(iconAsset: badge.iconAsset, label: badge.label, isEarned: vm.earnedBadgeIds.contains(badge.badgeName))
+        }
     }
 }
 
@@ -228,9 +276,11 @@ private struct ProfileBadge: Identifiable {
     let id = UUID()
     let iconAsset: String
     let label: String
-    let isEarned: Bool
+    var isEarned: Bool = false
+    var badgeName: String = ""
 }
 
 #Preview {
     ProfileView()
+        .environmentObject(Dependencies())
 }

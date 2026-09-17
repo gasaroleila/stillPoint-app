@@ -18,3 +18,4 @@ GoogleService-Info.plist
 # Node (firebase/functions)
 node_modules/
 firebase/functions/lib/
+.secret.local

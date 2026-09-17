@@ -1,6 +1,14 @@
 import Foundation
+import FirebaseFirestore
+import FirebaseFunctions
 
 struct ActivityRepositoryImpl: ActivityRepository {
+    private let firestore: FirestoreService
+
+    init(firestore: FirestoreService) {
+        self.firestore = firestore
+    }
+
     func getActivities() async throws -> [Activity] {
         Activity.samples
     }
@@ -10,19 +18,104 @@ struct ActivityRepositoryImpl: ActivityRepository {
     }
 
     func logCompletion(activityType: ActivityType, duration: Int) async throws {
-        // Stub — will write to Firestore in Phase 3
+        let collection = try firestore.userCollection("completions")
+        let data: [String: Any] = [
+            "activityType": activityType.rawValue,
+            "completedAt": Timestamp(date: Date()),
+            "durationSeconds": duration,
+            "xpAwarded": 0  // Cloud Functions will calculate and update this
+        ]
+        try await collection.addDocument(data: data)
     }
 
-    func getCompletions(from: Date, to: Date) async throws -> [ActivityCompletion] {
-        []
+    func getCompletions(from start: Date, to end: Date) async throws -> [ActivityCompletion] {
+        let collection = try firestore.userCollection("completions")
+        let snapshot = try await collection
+            .whereField("completedAt", isGreaterThanOrEqualTo: Timestamp(date: start))
+            .whereField("completedAt", isLessThanOrEqualTo: Timestamp(date: end))
+            .order(by: "completedAt", descending: true)
+            .getDocuments()
+        return snapshot.documents.compactMap { doc in
+            parseCompletion(doc)
+        }
     }
 
     func getTodaySuggestions() async throws -> [ActivitySuggestion] {
-        []
+        let today = Calendar.current.startOfDay(for: Date())
+        let dateString = ISO8601DateFormatter().string(from: today).prefix(10)
+        let doc = try firestore.userCollection("suggestions").document(String(dateString))
+        let snapshot = try await doc.getDocument()
+
+        guard snapshot.exists,
+              let data = snapshot.data(),
+              let activities = data["activities"] as? [[String: Any]] else { return [] }
+
+        return activities.compactMap { item in
+            guard let typeRaw = item["activityType"] as? String,
+                  let type = ActivityType(rawValue: typeRaw),
+                  let statusRaw = item["status"] as? String,
+                  let status = SuggestionStatus(rawValue: statusRaw) else { return nil }
+            let scheduledTime = (item["scheduledTime"] as? Timestamp)?.dateValue()
+            return ActivitySuggestion(
+                id: typeRaw,
+                activityType: type,
+                scheduledTime: scheduledTime,
+                status: status
+            )
+        }
     }
 
     func respondToSuggestion(id: String, action: SuggestionAction) async throws {
-        // Stub — will write to Firestore in Phase 3
+        let today = Calendar.current.startOfDay(for: Date())
+        let dateString = ISO8601DateFormatter().string(from: today).prefix(10)
+        let doc = try firestore.userCollection("suggestions").document(String(dateString))
+        let snapshot = try await doc.getDocument()
+
+        guard snapshot.exists,
+              let data = snapshot.data(),
+              var activities = data["activities"] as? [[String: Any]] else { return }
+
+        guard let index = activities.firstIndex(where: { ($0["activityType"] as? String) == id }) else { return }
+
+        switch action {
+        case .accept:
+            activities[index]["status"] = SuggestionStatus.accepted.rawValue
+        case .skip:
+            activities[index]["status"] = SuggestionStatus.skipped.rawValue
+        case .swap(let newType):
+            activities[index]["status"] = SuggestionStatus.swapped.rawValue
+            activities[index]["activityType"] = newType.rawValue
+        }
+
+        try await doc.updateData(["activities": activities])
+    }
+
+    func analyzeTask(description: String) async throws -> [TaskStep] {
+        let functions = Functions.functions()
+        let result = try await functions.httpsCallable("analyzeTask").call(["description": description])
+        guard let data = result.data as? [String: Any],
+              let steps = data["steps"] as? [[String: Any]] else { return [] }
+        return steps.compactMap { step in
+            guard let title = step["title"] as? String,
+                  let minutes = step["minutes"] as? Int else { return nil }
+            return TaskStep(title: title, minutes: minutes)
+        }
+    }
+
+    private func parseCompletion(_ doc: QueryDocumentSnapshot) -> ActivityCompletion? {
+        let data = doc.data()
+        guard let typeRaw = data["activityType"] as? String,
+              let type = ActivityType(rawValue: typeRaw),
+              let timestamp = data["completedAt"] as? Timestamp,
+              let duration = data["durationSeconds"] as? Int,
+              let xp = data["xpAwarded"] as? Int else { return nil }
+        return ActivityCompletion(
+            id: doc.documentID,
+            activityType: type,
+            completedAt: timestamp.dateValue(),
+            durationSeconds: duration,
+            xpAwarded: xp
+        )
     }
 }
 

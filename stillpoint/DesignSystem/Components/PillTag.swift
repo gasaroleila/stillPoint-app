@@ -4,18 +4,20 @@ struct PillTag: View {
     enum Style {
         case duration
         case xp
+        case xpCompleted
 
         var background: Color {
             switch self {
             case .duration: return .spBackgroundAlt
             case .xp: return .spPrimaryLight
+            case .xpCompleted: return .spPrimary
             }
         }
 
         var foreground: Color {
             switch self {
             case .duration: return .spTextSecondary
-            case .xp: return .spTextPrimary
+            case .xp, .xpCompleted: return .spTextPrimary
             }
         }
     }

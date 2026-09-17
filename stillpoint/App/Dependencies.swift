@@ -2,7 +2,7 @@ import SwiftUI
 
 @MainActor
 final class Dependencies: ObservableObject {
-    let auth: AuthRepositoryImpl
+    let auth: any AuthRepository
     let activities: any ActivityRepository
     let moods: any MoodRepository
     let user: any UserRepository
@@ -10,15 +10,20 @@ final class Dependencies: ObservableObject {
     @Published var isAuthenticated = false
 
     init(
-        auth: AuthRepositoryImpl = AuthRepositoryImpl(),
-        activities: any ActivityRepository = ActivityRepositoryImpl(),
-        moods: any MoodRepository = MoodRepositoryImpl(),
-        user: any UserRepository = UserRepositoryImpl()
+        auth: any AuthRepository = AuthRepositoryImpl(),
+        activities: (any ActivityRepository)? = nil,
+        moods: (any MoodRepository)? = nil,
+        user: (any UserRepository)? = nil
     ) {
         self.auth = auth
-        self.activities = activities
-        self.moods = moods
-        self.user = user
+
+        let firestoreService = FirestoreService {
+            auth.currentUserId
+        }
+
+        self.activities = activities ?? ActivityRepositoryImpl(firestore: firestoreService)
+        self.moods = moods ?? MoodRepositoryImpl(firestore: firestoreService)
+        self.user = user ?? UserRepositoryImpl(firestore: firestoreService)
 
         auth.startListening { [weak self] authenticated in
             Task { @MainActor [weak self] in

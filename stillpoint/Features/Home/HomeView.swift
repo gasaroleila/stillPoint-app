@@ -1,11 +1,24 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedMood: MoodType? = nil
+    @EnvironmentObject private var dependencies: Dependencies
+    @State private var viewModel: HomeViewModel?
     @State private var showBreathingExercise = false
     @State private var showDeepFocus = false
-    // Tracks XP earned from completed activities this session
-    @State private var earnedXP = 0
+    @State private var showColoring = false
+    @State private var showJournaling = false
+    @State private var showCelebration = false
+
+    private var vm: HomeViewModel {
+        if let viewModel { return viewModel }
+        let created = HomeViewModel(
+            moods: dependencies.moods,
+            activities: dependencies.activities,
+            user: dependencies.user
+        )
+        DispatchQueue.main.async { viewModel = created }
+        return created
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -17,17 +30,57 @@ struct HomeView: View {
         }
         .background(Color.spBackground)
         .ignoresSafeArea(edges: .top)
+        .onAppear { Task { await vm.loadProfile() } }
         .fullScreenCover(isPresented: $showBreathingExercise) {
             BreathingExerciseView(
-                onComplete: { xp in earnedXP += xp },
+                onComplete: { _ in handleCompletion(type: .breathing, duration: 120) },
                 onDismiss: { showBreathingExercise = false }
             )
         }
         .fullScreenCover(isPresented: $showDeepFocus) {
             DeepFocusView(
-                onComplete: { xp in earnedXP += xp },
+                activities: dependencies.activities,
+                onComplete: { _ in handleCompletion(type: .focus, duration: 1200) },
                 onDismiss: { showDeepFocus = false }
             )
+        }
+        .fullScreenCover(isPresented: $showColoring) {
+            ColoringView(
+                onComplete: { _ in handleCompletion(type: .coloring, duration: 300) },
+                onDismiss: { showColoring = false }
+            )
+        }
+        .fullScreenCover(isPresented: $showJournaling) {
+            JournalingView(
+                onComplete: { _ in handleCompletion(type: .journaling, duration: 1800) },
+                onDismiss: { showJournaling = false }
+            )
+        }
+        .fullScreenCover(isPresented: $showCelebration) {
+            if let celebration = vm.celebration {
+                CelebrationView(type: celebration) {
+                    vm.celebration = nil
+                    showCelebration = false
+                }
+            }
+        }
+        .onChange(of: showBreathingExercise) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showDeepFocus) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showColoring) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+        .onChange(of: showJournaling) { _, showing in
+            if !showing { showCelebrationIfNeeded() }
+        }
+    }
+
+    private func handleCompletion(type: ActivityType, duration: Int) {
+        Task {
+            await vm.logActivityCompletion(type: type, durationSeconds: duration)
         }
     }
 
@@ -36,15 +89,18 @@ struct HomeView: View {
     private var header: some View {
         VStack(spacing: 8) {
             HStack {
-                Image("user-profile")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 51.3, height: 51.3)
-                    .clipShape(Circle())
-                    .padding(2.3)
-                    .background(
-                        Circle().stroke(Color.white.opacity(0.8), lineWidth: 2)
-                    )
+                ZStack {
+                    Circle()
+                        .fill(Color.white.opacity(0.2))
+                        .frame(width: 51.3, height: 51.3)
+                    Image(systemName: vm.characterType.iconName)
+                        .font(.system(size: 24))
+                        .foregroundStyle(Color.white)
+                }
+                .padding(2.3)
+                .background(
+                    Circle().stroke(Color.white.opacity(0.8), lineWidth: 2)
+                )
 
                 Spacer()
 
@@ -52,7 +108,7 @@ struct HomeView: View {
                     Image(systemName: "flame.fill")
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(Color.white)
-                    Text("7")
+                    Text("\(vm.streakDays)")
                         .font(.custom("Nunito-Black", size: 22.4))
                         .foregroundStyle(Color.white)
                 }
@@ -73,7 +129,7 @@ struct HomeView: View {
             .padding(.bottom, 16)
 
             VStack(spacing: 0) {
-                Text("Good evening, Dev")
+                Text("Good evening, \(vm.userName)")
                     .font(.spGreeting)
                     .foregroundStyle(Color.white.opacity(0.7))
                 Text("How do you feel?")
@@ -93,7 +149,7 @@ struct HomeView: View {
     private var moodSection: some View {
         VStack(spacing: 0) {
             Group {
-                if let selectedMood {
+                if let selectedMood = vm.selectedMood {
                     moodCompact(selectedMood)
                 } else {
                     moodRow
@@ -125,8 +181,9 @@ struct HomeView: View {
     private func moodButton(_ mood: MoodType) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                selectedMood = mood
+                vm.selectedMood = mood
             }
+            Task { await vm.confirmMood() }
         } label: {
             VStack(spacing: 7) {
                 Image(mood.assetName)
@@ -165,7 +222,7 @@ struct HomeView: View {
             }
 
             Button {
-                // confirm — placeholder for future action
+                Task { await vm.confirmMood() }
             } label: {
                 Image(systemName: "checkmark")
                     .font(.system(size: 12, weight: .bold))
@@ -188,25 +245,30 @@ struct HomeView: View {
                     Text("Today's Activities")
                         .font(.spHeading)
                         .foregroundStyle(Color.spTextPrimary)
-                    Text("Complete all four to keep your streak alive")
+                    Text(vm.suggestions.isEmpty
+                         ? "Complete activities to keep your streak alive"
+                         : "3 suggested activities for today")
                         .font(.spBodyRegular)
                         .foregroundStyle(Color.spTextSecondary)
                 }
                 Spacer()
-                XPBadge(earned: earnedXP, total: 195)
+                XPBadge(earned: vm.earnedXP, total: vm.maxDailyXP)
             }
             .padding(.bottom, 4)
 
-            ForEach(homeActivities, id: \.type) { activity in
+            ForEach(vm.displayedActivities, id: \.type) { activity in
                 ActivityCard(
                     iconAsset: activity.iconAsset,
                     title: activity.title,
                     description: activity.description,
                     durationText: activity.durationText,
                     xpText: activity.xpText,
+                    isCompleted: vm.completedActivities.contains(activity.type),
                     action: { handleActivityTap(activity.type) }
                 )
             }
+
+
         }
         .padding(.horizontal, SP.Padding.screenHorizontal)
         .padding(.top, 16)
@@ -215,64 +277,32 @@ struct HomeView: View {
         .background(Color.spBackground)
     }
 
+    private func showCelebrationIfNeeded() {
+        if vm.celebration != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                showCelebration = true
+            }
+        }
+    }
+
     private func handleActivityTap(_ type: ActivityType) {
         switch type {
         case .breathing:
             showBreathingExercise = true
         case .focus:
             showDeepFocus = true
+        case .coloring:
+            showColoring = true
+        case .journaling:
+            showJournaling = true
         default:
             break
         }
     }
 
-    private var homeActivities: [HomeActivity] {
-        [
-            HomeActivity(
-                type: .breathing,
-                iconAsset: "breathing",
-                title: "Box Breathing",
-                description: "Calm your nervous system with a guided breathing pattern",
-                durationText: "~2 min",
-                xpText: "+30 XP"
-            ),
-            HomeActivity(
-                type: .focus,
-                iconAsset: "focus",
-                title: "Deep Focus",
-                description: "20 minutes of undivided attention to what matters most",
-                durationText: "20 min",
-                xpText: "+60 XP"
-            ),
-            HomeActivity(
-                type: .coloring,
-                iconAsset: "coloring",
-                title: "Coloring",
-                description: "Color a cute mushroom garden — relax and be creative",
-                durationText: "5 min",
-                xpText: "+25 XP"
-            ),
-            HomeActivity(
-                type: .journaling,
-                iconAsset: "journal",
-                title: "Journal",
-                description: "Reflect on your day and clear your mind with free writing",
-                durationText: "30 min",
-                xpText: "+80 XP"
-            ),
-        ]
-    }
-}
-
-private struct HomeActivity {
-    let type: ActivityType
-    let iconAsset: String
-    let title: String
-    let description: String
-    let durationText: String
-    let xpText: String
 }
 
 #Preview {
     HomeView()
+        .environmentObject(Dependencies())
 }

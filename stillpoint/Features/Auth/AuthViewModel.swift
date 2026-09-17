@@ -2,8 +2,8 @@ import SwiftUI
 
 enum AuthScreen: Equatable {
     case login
-    case register
     case forgotPassword
+    case mfaChallenge
 }
 
 @MainActor
@@ -23,39 +23,65 @@ final class AuthViewModel {
     var registerPassword = ""
     var registerConfirmPassword = ""
     var registerDateOfBirth = Calendar.current.date(byAdding: .year, value: -18, to: .now) ?? .now
+    var registerPhoneNumber = ""
+    var agreedToPolicy = false
+    var agreedToDisclaimer = false
 
     // Forgot password
     var resetEmail = ""
     var resetEmailSent = false
 
-    private let auth: AuthRepositoryImpl
+    // MFA
+    var mfaDigits: [String] = Array(repeating: "", count: 6)
+    var mfaVerificationID: String?
+    var mfaIsEnrollment = false
 
-    init(auth: AuthRepositoryImpl) {
+    var mfaCode: String { mfaDigits.joined() }
+    var isMFACodeComplete: Bool { mfaDigits.allSatisfy { !$0.isEmpty } }
+
+    private let auth: any AuthRepository
+
+    init(auth: any AuthRepository) {
         self.auth = auth
     }
+
+    // MARK: - Login
 
     func login() async {
         guard !loginEmail.isEmpty, !loginPassword.isEmpty else {
             errorMessage = "Please fill in all fields."
             return
         }
+        guard isValidEmail(loginEmail) else {
+            errorMessage = "Please enter a valid email address."
+            return
+        }
         isLoading = true
         errorMessage = nil
         do {
-            _ = try await auth.login(email: loginEmail, password: loginPassword)
+            let result = try await auth.login(email: loginEmail, password: loginPassword)
+            if result == .requiresMFA {
+                let verificationID = try await auth.sendMFALoginChallenge()
+                mfaVerificationID = verificationID
+                mfaIsEnrollment = false
+                resetMFADigits()
+                screen = .mfaChallenge
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
         isLoading = false
     }
 
+    // MARK: - Register
+
     func register() async {
         guard !registerUsername.isEmpty, !registerEmail.isEmpty, !registerPassword.isEmpty else {
             errorMessage = "Please fill in all fields."
             return
         }
-        guard registerPassword == registerConfirmPassword else {
-            errorMessage = "Passwords do not match."
+        guard isValidEmail(registerEmail) else {
+            errorMessage = "Please enter a valid email address."
             return
         }
         guard registerPassword.count >= 6 else {
@@ -83,6 +109,66 @@ final class AuthViewModel {
         isLoading = false
     }
 
+    // MARK: - MFA Enrollment (onboarding)
+
+    func startMFAEnrollment() async {
+        guard !registerPhoneNumber.isEmpty else {
+            errorMessage = "Phone number is required for verification."
+            return
+        }
+        isLoading = true
+        errorMessage = nil
+        do {
+            let verificationID = try await auth.setupMFA(phoneNumber: registerPhoneNumber)
+            mfaVerificationID = verificationID
+            mfaIsEnrollment = true
+            resetMFADigits()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    func verifyMFA() async {
+        guard isMFACodeComplete, let verificationID = mfaVerificationID else { return }
+        isLoading = true
+        errorMessage = nil
+        do {
+            if mfaIsEnrollment {
+                try await auth.verifyMFA(code: mfaCode, verificationID: verificationID)
+            } else {
+                try await auth.completeMFALoginChallenge(code: mfaCode, verificationID: verificationID)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    var mfaVerified: Bool {
+        !isLoading && errorMessage == nil && mfaVerificationID != nil && isMFACodeComplete
+    }
+
+    func resendMFACode() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            if mfaIsEnrollment {
+                let verificationID = try await auth.resendMFACode(phoneNumber: registerPhoneNumber)
+                mfaVerificationID = verificationID
+            } else {
+                let verificationID = try await auth.sendMFALoginChallenge()
+                mfaVerificationID = verificationID
+            }
+            resetMFADigits()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+    }
+
+    // MARK: - Password Reset
+
     func requestPasswordReset() async {
         guard !resetEmail.isEmpty else {
             errorMessage = "Please enter your email."
@@ -97,5 +183,16 @@ final class AuthViewModel {
             errorMessage = error.localizedDescription
         }
         isLoading = false
+    }
+
+    // MARK: - Helpers
+
+    private func isValidEmail(_ email: String) -> Bool {
+        let parts = email.split(separator: "@")
+        return parts.count == 2 && parts[1].contains(".")
+    }
+
+    private func resetMFADigits() {
+        mfaDigits = Array(repeating: "", count: 6)
     }
 }

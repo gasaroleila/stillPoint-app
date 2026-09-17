@@ -28,6 +28,8 @@
 		<string>Nunito-ExtraBold.ttf</string>
 		<string>Nunito-Black.ttf</string>
 	</array>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>StillPoint reads your calendar to find free time slots and schedule wellness activities for you.</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
